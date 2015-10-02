@@ -19,7 +19,10 @@
  */
 
 var keystone = require('keystone');
+var passport = require('passport');
 var middleware = require('./middleware');
+var auth = require('./auth');
+var oauth = require('./oauth');
 var importRoutes = keystone.importer(__dirname);
 
 // Common Middleware
@@ -28,7 +31,8 @@ keystone.pre('render', middleware.flashMessages);
 
 // Import Route Controllers
 var routes = {
-	views: importRoutes('./views')
+	views: importRoutes('./views'),
+  api: importRoutes('./api')
 };
 
 // Setup Route Bindings
@@ -37,6 +41,12 @@ exports = module.exports = function(app) {
 	// Views
 	app.get('/', routes.views.index);
 	app.all('/contact', routes.views.contact);
+
+  // API
+  app.post('/oauth/token', oauth.token);
+  app.all('/api/*', passport.authenticate('accessToken', { session: false }), keystone.middleware.api);
+  app.get('/api/user/list', routes.api.user.list);
+  app.get('/api/user/me', routes.api.user.me);
 	
 	// NOTE: To protect a route so that only admins can see it, use the requireUser middleware:
 	// app.get('/protected', middleware.requireUser, routes.views.protected);
