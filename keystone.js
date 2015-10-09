@@ -90,7 +90,8 @@ keystone.set('email tests', require('./routes/emails'));
 keystone.set('nav', {
 	'enquiries': 'enquiries',
 	'users': 'users',
-	'clients': 'clients'
+	'clients': 'clients',
+	'course': ['learning-paths', 'courses', 'activities']
 });
 
 // Start Keystone to connect to your database and initialise the web server
