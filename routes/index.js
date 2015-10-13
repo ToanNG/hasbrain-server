@@ -52,6 +52,7 @@ exports = module.exports = function(app) {
   app.post('/api/story/create', routes.api.story.create);
   app.put('/api/story/:id/complete', routes.api.story.complete);
 
+  app.get('/api/enrollment/:id', routes.api.enrollment.get);
   app.post('/api/enrollment/create', routes.api.enrollment.create);
 
   // Error Handler

@@ -7,6 +7,7 @@
     "crypto": "0.0.3",
     "dotenv": "^1.1.0",
     "keystone": "^0.3.11",
+    "lodash": "^3.10.1",
     "node-sass": "^2.1.1",
     "node-sass-middleware": "^0.5.0",
     "oauth2orize": "^1.0.1",
@@ -14,6 +15,7 @@
     "passport-http": "^0.3.0",
     "passport-http-bearer": "^1.0.1",
     "passport-oauth2-client-password": "^0.1.2",
+    "promise": "^7.0.4",
     "underscore": "^1.8.0"
   },
   "devDependencies": {
