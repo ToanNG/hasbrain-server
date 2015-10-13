@@ -6,7 +6,7 @@ var Client = new keystone.List('Client', {
 });
 
 Client.add({
-  clientId: { type: String, require: true, initial: true, index: true },
+  clientId: { type: String, require: true, initial: true },
   clientSecret: { type: String, require: true, initial: true },
 });
 

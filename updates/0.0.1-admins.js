@@ -9,7 +9,19 @@
 
 exports.create = {
 	User: [
-		{ 'name.first': 'Admin', 'name.last': 'User', email: 'user@keystonejs.com', password: 'admin', isAdmin: true }
+		{ 'name.first': 'Admin', 'name.last': 'User', email: 'user@keystonejs.com', password: 'admin', isAdmin: true },
+		{ 'name.first': 'Toan', 'name.last': 'Nguyen', email: 'toan2406@gmail.com', password: 'admin', isAdmin: false }
+	],
+
+	Client: [
+		{ 'clientId': 'hasbrain_tracker', 'clientSecret': 'h4sbr4in' }
+	],
+
+	LearningPath: [
+		{ 'name': 'Front-End' },
+		{ 'name': 'Node.js' },
+		{ 'name': 'Android' },
+		{ 'name': 'iOS' }
 	]
 };
 

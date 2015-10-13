@@ -45,8 +45,24 @@ exports = module.exports = function(app) {
   // API
   app.post('/oauth/token', oauth.token);
   app.all('/api/*', passport.authenticate('accessToken', { session: false }), keystone.middleware.api);
+
   app.get('/api/user/list', routes.api.user.list);
   app.get('/api/user/me', routes.api.user.me);
+
+  app.post('/api/story/create', routes.api.story.create);
+  app.put('/api/story/:id/complete', routes.api.story.complete);
+
+  app.post('/api/enrollment/create', routes.api.enrollment.create);
+
+  // Error Handler
+  app.use(function(err, req, res, next) {
+    if (err.statusCode === 404) {
+      return res.status(404).send({ error: 'Not found', detail: err });
+    }
+
+    // If no statusCode, default case is database error.
+    return res.status(500).apiError('Database error', err);
+  });
 	
 	// NOTE: To protect a route so that only admins can see it, use the requireUser middleware:
 	// app.get('/protected', middleware.requireUser, routes.views.protected);

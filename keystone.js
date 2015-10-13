@@ -91,7 +91,9 @@ keystone.set('nav', {
 	'enquiries': 'enquiries',
 	'users': 'users',
 	'clients': 'clients',
-	'course': ['learning-paths', 'courses', 'activities']
+	'courses': ['learning-paths', 'courses', 'activities'],
+	'enrollments': 'enrollments',
+	'stories': 'stories'
 });
 
 // Start Keystone to connect to your database and initialise the web server
