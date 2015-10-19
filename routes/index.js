@@ -43,8 +43,9 @@ exports = module.exports = function(app) {
 	app.all('/contact', routes.views.contact);
 
   // API
+  app.use(keystone.middleware.api);
   app.post('/oauth/token', oauth.token);
-  app.all('/api/*', passport.authenticate('accessToken', { session: false }), keystone.middleware.api);
+  app.all('/api/*', passport.authenticate('accessToken', { session: false }));
 
   app.get('/api/user/list', routes.api.user.list);
   app.get('/api/user/me', routes.api.user.me);

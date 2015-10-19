@@ -1,10 +1,10 @@
 var async = require('async'),
     keystone = require('keystone');
 
-var User = keystone.list('User');
+var UserModel = keystone.list('User').model;
 
 exports.list = function(req, res, next) {
-  User.model.find({ isAdmin: false })
+  UserModel.find({ isAdmin: false })
     .select({ __v: 0, password: 0, isAdmin: 0 })
     .exec()
     .then(function(items) {
@@ -17,7 +17,7 @@ exports.list = function(req, res, next) {
 }
 
 exports.me = function(req, res, next) {
-  User.model.findById(req.user._id)
+  UserModel.findById(req.user._id)
     .select({ __v: 0, password: 0, isAdmin: 0 })
     .exec()
     .then(function(item) {

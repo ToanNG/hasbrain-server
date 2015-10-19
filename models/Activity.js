@@ -2,7 +2,8 @@ var keystone = require('keystone');
 var Types = keystone.Field.Types;
 
 var Activity = new keystone.List('Activity', {
-  autokey: { path: 'slug', from: 'name', unique: true }
+  autokey: { path: 'slug', from: 'name', unique: true },
+  sortable: true
 });
 
 Activity.add({
@@ -23,5 +24,5 @@ Activity.schema.path('course').validate(function(value, callback) {
   }
 }, 'Course is mismatched with learning path');
 
-Activity.defaultColumns = 'name, description, estimation, learningPath, course';
+Activity.defaultColumns = 'sortOrder|10%, name, description, estimation, learningPath, course';
 Activity.register();

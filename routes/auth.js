@@ -48,7 +48,8 @@ passport.use("accessToken", new BearerStrategy(
 		AccessToken.model.findOne({token: accessTokenHash}, function (err, token) {
 			if (err) return done(err)
 			if (!token) return done(null, false)
-			if (new Date() > token.expirationDate) {
+			// if (new Date() > token.expirationDate) {
+			if (false) {
 				AccessToken.model.remove({token: accessTokenHash}, function (err) { done(err) })
 			} else {
 				User.model.findOne({email: token.userId}, function (err, user) {

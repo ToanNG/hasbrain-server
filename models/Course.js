@@ -2,7 +2,8 @@ var keystone = require('keystone');
 var Types = keystone.Field.Types;
 
 var Course = new keystone.List('Course', {
-  autokey: { path: 'slug', from: 'name', unique: true }
+  autokey: { path: 'slug', from: 'name', unique: true },
+  sortable: true
 });
 
 Course.add({
@@ -11,5 +12,7 @@ Course.add({
   learningPath: { type: Types.Relationship, ref: 'LearningPath', index: true }
 });
 
-Course.defaultColumns = 'name, description, learningPath';
+Course.relationship({ ref: 'Activity', path: 'activities', refPath: 'course' });
+
+Course.defaultColumns = 'sortOrder|10%, name, description, learningPath';
 Course.register();
