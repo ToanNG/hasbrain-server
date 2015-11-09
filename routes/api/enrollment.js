@@ -21,37 +21,19 @@ exports.listStory = function(req, res, next) {
     });
 }
 
-exports.get = function(req, res, next) {
-  var data = null;
-
+exports.listActivity = function(req, res, next) {
   Enrollment.model.findById(req.params.id)
-    .select({ __v: 0 })
-    .populate('learningPath', { __v: 0 })
-    .populate('student', { __v: 0, password: 0, isAdmin: 0 })
-    .lean()
+    .populate('learningPath')
     .exec()
     .then(function(enrollment) {
-      data = enrollment;
-
       return Activity.model.find({ learningPath: enrollment.learningPath._id })
-        .select({ __v: 0, learningPath: 0 })
+        .select({ __v: 0 })
+        .populate('learningPath', { __v: 0 })
         .populate('course', { __v: 0, learningPath: 0 })
-        .lean()
         .exec();
     })
     .then(function(activities) {
-      data.learningPath.courses = _.chain(activities)
-        .groupBy(function(activity) {
-          return activity.course._id;
-        })
-        .values()
-        .map(function(group) {
-          var cleanedGroup = _.invoke(group, function() { return _.omit(this, 'course') });
-          return _.assign({}, group[0].course, { activities: cleanedGroup });
-        })
-        .value();
-
-      return res.status(200).apiResponse(data);
+      return res.status(200).apiResponse(activities);
     })
     .then(null, function(err) {
       return next(err);

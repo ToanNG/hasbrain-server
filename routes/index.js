@@ -53,7 +53,7 @@ exports = module.exports = function(app) {
   app.post('/api/story/create', routes.api.story.create);
   app.put('/api/story/:id/complete', routes.api.story.complete);
 
-  app.get('/api/enrollment/:id', routes.api.enrollment.get);
+  app.get('/api/enrollment/:id/activity/list', routes.api.enrollment.listActivity);
   app.get('/api/enrollment/:id/story/list', routes.api.enrollment.listStory);
   app.post('/api/enrollment/create', routes.api.enrollment.create);
 
