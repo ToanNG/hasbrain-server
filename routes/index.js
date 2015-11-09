@@ -54,6 +54,7 @@ exports = module.exports = function(app) {
   app.put('/api/story/:id/complete', routes.api.story.complete);
 
   app.get('/api/enrollment/:id', routes.api.enrollment.get);
+  app.get('/api/enrollment/:id/story/list', routes.api.enrollment.listStory);
   app.post('/api/enrollment/create', routes.api.enrollment.create);
 
   // Error Handler

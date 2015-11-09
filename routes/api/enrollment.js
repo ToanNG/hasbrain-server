@@ -4,7 +4,22 @@ var async = require('async'),
 
 var Enrollment = keystone.list('Enrollment'),
     Course = keystone.list('Course'),
+    Story = keystone.list('Story'),
     Activity = keystone.list('Activity');
+
+exports.listStory = function(req, res, next) {
+  Story.model.find({ enrollment: req.params.id })
+    .select({ __v: 0, enrollment: 0 })
+    .populate('activity', '_id name estimation')
+    .exec()
+    .then(function(items) {
+      return res.status(200).apiResponse({
+        stories: items
+      });
+    }, function(err) {
+      return next(err)
+    });
+}
 
 exports.get = function(req, res, next) {
   var data = null;
