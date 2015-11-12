@@ -13,16 +13,26 @@ function NotFound(message) {
 util.inherits(NotFound, Error);
 
 exports.create = function(req, res, next) {
-  var item = new Story.model({
-    enrollment: req.body.enrollment,
-    activity: req.body.activity
-  });
-
-  item.save(function(err) {
-    if (err) return next(err);
-    
-    return res.status(200).apiResponse(item);
-  });
+  Story.model.find({
+      $and: [
+        { enrollment: req.body.enrollment },
+        { isCompleted: false }
+      ]
+    })
+    .remove()
+    .exec()
+    .then(function() {
+      return Story.model.create({
+        enrollment: req.body.enrollment,
+        activity: req.body.activity
+      });
+    })
+    .then(function(item) {
+      return res.status(200).apiResponse(item);
+    })
+    .then(null, function(err) {
+      return next(err);
+    });
 }
 
 exports.complete = function(req, res, next) {

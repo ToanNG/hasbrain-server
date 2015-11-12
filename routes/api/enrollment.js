@@ -9,13 +9,12 @@ var Enrollment = keystone.list('Enrollment'),
 
 exports.listStory = function(req, res, next) {
   Story.model.find({ enrollment: req.params.id })
-    .select({ __v: 0, enrollment: 0 })
+    .select({ __v: 0 })
+    .populate('enrollment', '_id')
     .populate('activity', '_id name estimation')
     .exec()
-    .then(function(items) {
-      return res.status(200).apiResponse({
-        stories: items
-      });
+    .then(function(stories) {
+      return res.status(200).apiResponse(stories);
     }, function(err) {
       return next(err)
     });
