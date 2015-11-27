@@ -8,6 +8,7 @@ var Activity = new keystone.List('Activity', {
 
 Activity.add({
   name: { type: String, required: true, index: true },
+  link: { type: String },
   description: { type: Types.Textarea, height: 150 },
   estimation: { type: Types.Number, require: true },
   learningPath: { type: Types.Relationship, ref: 'LearningPath', index: true, required: true, initial: true },

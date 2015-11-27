@@ -8,7 +8,13 @@ var Enrollment = keystone.list('Enrollment'),
     Activity = keystone.list('Activity');
 
 exports.listStory = function(req, res, next) {
+  var isCompleted = req.query.is_completed,
+      queries = {};
+  if (isCompleted) {
+    queries.isCompleted = isCompleted === 'true';
+  }
   Story.model.find({ enrollment: req.params.id })
+    .where(queries)
     .select({ __v: 0 })
     .populate('enrollment', '_id')
     .populate('activity', '_id name estimation')

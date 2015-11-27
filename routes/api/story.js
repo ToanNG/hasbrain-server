@@ -28,7 +28,10 @@ exports.create = function(req, res, next) {
       });
     })
     .then(function(item) {
-      return res.status(200).apiResponse(item);
+      item.populate('enrollment', '_id')
+        .populate('activity', '_id name estimation', function(err, story) {
+          return res.status(200).apiResponse(item);
+        });
     })
     .then(null, function(err) {
       return next(err);
