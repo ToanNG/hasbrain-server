@@ -76,25 +76,47 @@ exports.todayStory = function(req, res, next) {
 }
 
 exports.create = function(req, res, next) {
-  Story.model.find({
-      $and: [
-        { enrollment: req.body.enrollment },
-        { isCompleted: false }
-      ]
+  Enrollment.model.findOne({
+      student: req.user._id,
+      isActive: true
     })
-    .remove()
     .exec()
-    .then(function() {
+    .then(function(enrollment) {
+      if (!enrollment)
+        return next(new NotFound('Enrollment not found'));
+
+      return Story.model.find({
+          $and: [
+            { enrollment: enrollment._id },
+            { isCompleted: false }
+          ]
+        })
+        .remove()
+        .exec()
+        .then(function() {
+          return enrollment;
+        });
+    })
+    .then(function(enrollment) {
       return Story.model.create({
-        enrollment: req.body.enrollment,
+        enrollment: enrollment._id,
         activity: req.body.activity
       });
     })
     .then(function(item) {
-      item.populate('enrollment', '_id')
-        .populate('activity', '_id name estimation', function(err, story) {
-          return res.status(200).apiResponse(item);
-        });
+      item.populate('activity', function(err, story) {
+        story.activity
+          .populate('learningPath', { __v: 0 })
+          .populate('course', { __v: 0, learningPath: 0 }, function(err, activity) {
+            var result = _.assign({}, activity.toObject({ versionKey: false }), {
+              isCompleted: story.isCompleted,
+              startTime: story.startTime,
+              storyId: story._id
+            })
+            
+            return res.status(200).apiResponse(result);
+          });
+      });
     })
     .then(null, function(err) {
       return next(err);
