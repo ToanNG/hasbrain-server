@@ -9,6 +9,9 @@ var Course = new keystone.List('Course', {
 Course.add({
   name: { type: String, required: true, index: true },
   description: { type: Types.Textarea, height: 150 },
+  cover: {
+    url: { type: String }
+  },
   learningPath: { type: Types.Relationship, ref: 'LearningPath', index: true }
 });
 

@@ -50,6 +50,7 @@ exports = module.exports = function(app) {
   app.get('/api/user/list', routes.api.user.list);
   app.get('/api/user/me', routes.api.user.me);
 
+  app.get('/api/story/today', routes.api.story.todayStory);
   app.post('/api/story/create', routes.api.story.create);
   app.put('/api/story/:id/complete', routes.api.story.complete);
 

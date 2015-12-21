@@ -8,11 +8,14 @@ var Activity = new keystone.List('Activity', {
 
 Activity.add({
   name: { type: String, required: true, index: true },
-  link: { type: String },
+  practiceLink: { type: String },
   description: { type: Types.Textarea, height: 150 },
+  problem: { type: Types.Html, wysiwyg: true },
+  knowledge: { type: Types.Html, wysiwyg: true },
   estimation: { type: Types.Number, require: true },
   learningPath: { type: Types.Relationship, ref: 'LearningPath', index: true, required: true, initial: true },
-  course: { type: Types.Relationship, ref: 'Course', index: true, filters: { 'learningPath': ':learningPath' } }
+  course: { type: Types.Relationship, ref: 'Course', index: true, filters: { 'learningPath': ':learningPath' } },
+  order: { type: Types.Number }
 });
 
 Activity.schema.path('course').validate(function(value, callback) {

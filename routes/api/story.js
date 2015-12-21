@@ -1,8 +1,11 @@
 var async = require('async'),
     keystone = require('keystone'),
-    util = require('util');
+    util = require('util')
+    _ = require('lodash');
 
-var Story = keystone.list('Story');
+var Story = keystone.list('Story'),
+    Enrollment = keystone.list('Enrollment'),
+    Activity = keystone.list('Activity');
 
 function NotFound(message) {  
   Error.call(this);
@@ -11,6 +14,66 @@ function NotFound(message) {
 }
 
 util.inherits(NotFound, Error);
+
+exports.todayStory = function(req, res, next) {
+  Enrollment.model.findOne({
+      student: req.user._id,
+      isActive: true
+    })
+    .exec()
+    .then(function(enrollment) {
+      if (!enrollment)
+        return next(new NotFound('Enrollment not found'));
+
+      return Story.model.find({
+          enrollment: enrollment._id
+        })
+        .exec()
+        .then(function(stories) {
+          return {
+            stories: stories,
+            enrollment: enrollment
+          };
+        });
+    })
+    .then(function(data) {
+      var uncompletedStory = _.find(data.stories, 'isCompleted', false),
+          completedActivities = _.pluck(data.stories, 'activity');
+
+      if (uncompletedStory) {
+        return Activity.model.findOne({
+            _id: uncompletedStory.activity
+          })
+          .select({ __v: 0 })
+          .populate('learningPath', { __v: 0 })
+          .populate('course', { __v: 0, learningPath: 0 })
+          .exec()
+          .then(function(story) {
+            return _.assign({}, story.toObject(), {
+              isCompleted: uncompletedStory.isCompleted,
+              startTime: uncompletedStory.startTime,
+              storyId: uncompletedStory._id
+            })
+          });
+      } else {
+        return Activity.model.findOne({
+            _id: { $nin: completedActivities },
+            learningPath: data.enrollment.learningPath
+          })
+          .select({ __v: 0 })
+          .populate('learningPath', { __v: 0 })
+          .populate('course', { __v: 0, learningPath: 0 })
+          .sort('order')
+          .exec();
+      }
+    })
+    .then(function(activity) {
+      return res.status(200).apiResponse(activity);
+    })
+    .then(null, function(err) {
+      return next(err);
+    });
+}
 
 exports.create = function(req, res, next) {
   Story.model.find({
