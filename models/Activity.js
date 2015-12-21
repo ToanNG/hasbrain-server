@@ -13,7 +13,7 @@ Activity.add({
   problem: { type: Types.Html, wysiwyg: true },
   knowledge: { type: Types.Html, wysiwyg: true },
   estimation: { type: Types.Number, require: true },
-  learningPath: { type: Types.Relationship, ref: 'LearningPath', index: true, required: true, initial: true },
+  learningPath: { type: Types.Relationship, ref: 'LearningPath', index: true, initial: true },
   course: { type: Types.Relationship, ref: 'Course', index: true, filters: { 'learningPath': ':learningPath' } },
   order: { type: Types.Number }
 });
@@ -28,5 +28,5 @@ Activity.schema.path('course').validate(function(value, callback) {
   }
 }, 'Course is mismatched with learning path');
 
-Activity.defaultColumns = 'sortOrder|10%, name, description, estimation, learningPath, course';
+Activity.defaultColumns = 'sortOrder|10%, name|20%, order|10%, estimation, learningPath, course';
 Activity.register();
