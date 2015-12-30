@@ -8,7 +8,8 @@ var Types = keystone.Field.Types;
 
 var Enquiry = new keystone.List('Enquiry', {
 	nocreate: true,
-	noedit: true
+	noedit: true,
+	hidden: true
 });
 
 Enquiry.add({

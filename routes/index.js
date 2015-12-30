@@ -52,11 +52,13 @@ exports = module.exports = function(app) {
 
   app.get('/api/story/today', routes.api.story.todayStory);
   app.post('/api/story/create', routes.api.story.create);
-  app.put('/api/story/:id/complete', routes.api.story.complete);
+  app.post('/api/story/:id/complete', routes.api.story.complete);
 
   app.get('/api/enrollment/:id/activity/list', routes.api.enrollment.listActivity);
   app.get('/api/enrollment/:id/story/list', routes.api.enrollment.listStory);
   app.post('/api/enrollment/create', routes.api.enrollment.create);
+
+  app.post('/hook/circle/complete-story', routes.api.circle.completeStory);
 
   // Error Handler
   app.use(function(err, req, res, next) {
