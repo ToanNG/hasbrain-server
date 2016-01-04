@@ -8,14 +8,14 @@ var Activity = new keystone.List('Activity', {
 
 Activity.add({
   name: { type: String, required: true, index: true },
-  practiceLink: { type: String },
   description: { type: Types.Textarea, height: 150 },
   problem: { type: Types.Html, wysiwyg: true },
   knowledge: { type: Types.Html, wysiwyg: true },
   estimation: { type: Types.Number, require: true },
   learningPath: { type: Types.Relationship, ref: 'LearningPath', index: true, initial: true },
   course: { type: Types.Relationship, ref: 'Course', index: true, filters: { 'learningPath': ':learningPath' } },
-  order: { type: Types.Number }
+  no: { type: Types.Number, require: true },
+  tester: { type: String }
 });
 
 Activity.schema.path('course').validate(function(value, callback) {
@@ -28,5 +28,5 @@ Activity.schema.path('course').validate(function(value, callback) {
   }
 }, 'Course is mismatched with learning path');
 
-Activity.defaultColumns = 'sortOrder|10%, name|20%, order|10%, estimation, learningPath, course';
+Activity.defaultColumns = 'sortOrder|10%, name|20%, no|10%, estimation, learningPath, course';
 Activity.register();

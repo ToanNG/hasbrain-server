@@ -13,7 +13,8 @@ Story.add({
   activity: { type: Types.Relationship, ref: 'Activity', required: true, initial: true },
   startTime: { type: Types.Datetime, default: Date.now },
   endTime: { type: Types.Datetime },
-  isCompleted: { type: Boolean, default: false }
+  isCompleted: { type: Boolean, default: false },
+  attempts: { type: Number, default: 0 }
 });
 
 Story.schema.index({ enrollment: 1, activity: 1 }, { unique: true });
@@ -25,5 +26,5 @@ Story.schema.pre('save', function(next) {
     next();
 });
 
-Story.defaultColumns = 'enrollment, activity, startTime, endTime, isCompleted';
+Story.defaultColumns = 'enrollment, activity, startTime, endTime, isCompleted, attempts';
 Story.register();
