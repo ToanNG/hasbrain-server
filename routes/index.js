@@ -60,6 +60,8 @@ exports = module.exports = function(app) {
 
   app.post('/hook/circle/complete-story', routes.api.circle.completeStory);
 
+  app.post('/ci/circle/build', routes.api.circle.build);
+
   // Error Handler
   app.use(function(err, req, res, next) {
     if (err.statusCode === 404) {

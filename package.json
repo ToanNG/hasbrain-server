@@ -16,6 +16,7 @@
     "passport-http-bearer": "^1.0.1",
     "passport-oauth2-client-password": "^0.1.2",
     "promise": "^7.0.4",
+    "superagent": "^1.6.1",
     "underscore": "^1.8.0",
     "winston": "^1.1.0"
   },

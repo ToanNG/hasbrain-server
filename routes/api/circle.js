@@ -1,6 +1,7 @@
 var async = require('async'),
     keystone = require('keystone'),
-    util = require('util');
+    util = require('util'),
+    request = require('superagent');
 
 var Story = keystone.list('Story');
 
@@ -11,6 +12,19 @@ function NotFound(message) {
 }
 
 util.inherits(NotFound, Error);
+
+exports.build = function(req, res, next) {
+  request
+    .post(req.body.build_api)
+    .send({
+      build_parameters: req.body.build_parameters
+    })
+    .set('Content-Type', 'application/json')
+    .end(function(err, data) {
+      if (err) return next(err);
+      return res.status(200).send();
+    });
+}
 
 exports.completeStory = function(req, res, next) {
   var payload = req.body.payload;
