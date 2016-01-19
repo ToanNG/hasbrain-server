@@ -63,7 +63,7 @@ exports.todayStory = function(req, res, next) {
           .select({ __v: 0 })
           .populate('learningPath', { __v: 0 })
           .populate('course', { __v: 0, learningPath: 0 })
-          .sort('order')
+          .sort('no')
           .exec();
       }
     })

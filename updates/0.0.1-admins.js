@@ -35,7 +35,7 @@ exports.create = {
 			course: 'js_fundamental',
 			description: 'Learn what argument is in Javascript.',
 			problem: '<p>Implement a function that returns the sum of its parameters. For example:</p> <pre><code class="language-javascript">sum(2, 4, 6) // =&gt; 12</code></pre> <p>You can get the code boilerplate <a href="#">here</a>.</p>',
-			knowledge: '<p>The arguments object is an Array-like object corresponding to the arguments passed to a function. It is similar to an Array, but does not have any Array properties except length. However it can be converted to a real Array:</p> <pre><code class="language-javascript">var args = Array.prototype.slice.call(arguments);</code></pre>',
+			knowledge: '<p>The arguments object is an Array-like object corresponding to the arguments passed to a function. It is similar to an Array, but does not have any Array properties except length. However it can be converted to a real Array:</p><pre><code class="language-javascript">var args = Array.prototype.slice.call(arguments);</code></pre><p>Watch the following video for more details</p><p><iframe src="https://www.youtube.com/embed/cBzwch3mqxA" width="560" height="315" frameborder="0" allowfullscreen=""></iframe></p>',
 			estimation: 1,
 			no: 1,
 			tester: 'https://circleci.com/api/v1/project/ToanNG/node-test/tree/master?circle-token=1e0d54eafd8f594f7be72999699f005fa2a06a33'
