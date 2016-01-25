@@ -13,8 +13,8 @@ Activity.add({
   knowledge: { type: Types.Html, wysiwyg: true },
   estimation: { type: Types.Number, require: true },
   learningPath: { type: Types.Relationship, ref: 'LearningPath', index: true, initial: true },
-  course: { type: Types.Relationship, ref: 'Course', index: true, filters: { 'learningPath': ':learningPath' } },
-  no: { type: Types.Number, require: true },
+  course: { type: Types.Relationship, ref: 'Course', index: true, initial: true, filters: { 'learningPath': ':learningPath' } },
+  no: { type: Types.Number, require: true, initial: true },
   tester: { type: String }
 });
 
