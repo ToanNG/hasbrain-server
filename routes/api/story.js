@@ -44,7 +44,7 @@ exports.todayStory = function(req, res, next) {
         return Activity.model.findOne({
             _id: uncompletedStory.activity
           })
-          .select({ __v: 0 })
+          .select({ __v: 0, tester: 0 })
           .populate('learningPath', { __v: 0 })
           .populate('course', { __v: 0, learningPath: 0 })
           .exec()

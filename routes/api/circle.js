@@ -8,8 +8,6 @@ var async = require('async'),
       subscribe_key: 'sub-c-9f9d4258-b37e-11e5-9848-0619f8945a4f'
     });
 
-var buildUrl = 'https://circleci.com/api/v1/project/ToanNG/:tester/tree/master?circle-token=1e0d54eafd8f594f7be72999699f005fa2a06a33';
-
 var Story = keystone.list('Story');
 
 function NotFound(message) {  
@@ -31,7 +29,7 @@ exports.build = function(req, res, next) {
       if (!req.user._id.equals(story.enrollment.student)) return next(new Error('Unauthorized'));
       
       request
-        .post(buildUrl.replace(':tester', story.activity.tester))
+        .post(story.activity.tester)
         .send({
           build_parameters: {
             TARGET_REPO: req.body.repo,
@@ -50,26 +48,28 @@ exports.build = function(req, res, next) {
 exports.completeStory = function(req, res, next) {
   var payload = req.body.payload;
 
-  if (payload.failed) {
-    pubnub.publish({ 
-      channel: 'hasbrain_test',
-      message: { text: 'Test fails! Please try again.' }
-    });
-    return next(new Error('Test failed'));
-  }
-
-  Story.model.findById(payload.build_parameters.STORY_ID).exec(function(err, item) {
-    if (err) return next(err);
-    if (!item) return next(new NotFound('Story not found'));
-    
-    item.getUpdateHandler(req).process({ isCompleted: true }, function(err) {
+  Story.model.findById(payload.build_parameters.STORY_ID)
+    .populate('enrollment', 'student')
+    .exec(function(err, story) {
       if (err) return next(err);
+      if (!story) return next(new NotFound('Story not found'));
+
+      if (payload.failed) {
+        pubnub.publish({ 
+          channel: 'hasbrain_test_' + story.enrollment.student,
+          message: { text: 'Test fails! Please try again.' }
+        });
+        return res.status(200).send();
+      }
       
-      pubnub.publish({ 
-        channel: 'hasbrain_test',
-        message: { text: 'Congrat! You passed the test.' }
+      story.getUpdateHandler(req).process({ isCompleted: true }, function(err) {
+        if (err) return next(err);
+        
+        pubnub.publish({ 
+          channel: 'hasbrain_test_' + story.enrollment.student,
+          message: { text: 'Congrat! You passed the test.' }
+        });
+        return res.status(200).send();
       });
-      return res.status(200).apiResponse(item);
     });
-  });
 }
