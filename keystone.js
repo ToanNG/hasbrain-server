@@ -93,6 +93,7 @@ keystone.set('nav', {
 	'clients': 'clients',
 	'courses': ['learning-paths', 'courses', 'activities'],
 	'enrollments': 'enrollments',
+	'companies': 'companies',
 	'stories': 'stories'
 });
 

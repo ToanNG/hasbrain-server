@@ -8,6 +8,7 @@ var Activity = new keystone.List('Activity', {
 
 Activity.add({
   name: { type: String, required: true, index: true },
+  company: { type: Types.Relationship, ref: 'Company', index: true },
   description: { type: Types.Textarea, height: 150 },
   problem: { type: Types.Html, wysiwyg: true },
   knowledge: { type: Types.Html, wysiwyg: true },
