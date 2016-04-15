@@ -45,6 +45,7 @@ exports.todayStory = function(req, res, next) {
             _id: uncompletedStory.activity
           })
           .select({ __v: 0, tester: 0 })
+          .populate('company', { __v: 0 })
           .populate('learningPath', { __v: 0 })
           .populate('course', { __v: 0, learningPath: 0 })
           .exec()
@@ -61,6 +62,7 @@ exports.todayStory = function(req, res, next) {
             learningPath: data.enrollment.learningPath
           })
           .select({ __v: 0 })
+          .populate('company', { __v: 0 })
           .populate('learningPath', { __v: 0 })
           .populate('course', { __v: 0, learningPath: 0 })
           .sort('no')
@@ -106,6 +108,7 @@ exports.create = function(req, res, next) {
     .then(function(item) {
       item.populate('activity', function(err, story) {
         story.activity
+          .populate('company', { __v: 0 })
           .populate('learningPath', { __v: 0 })
           .populate('course', { __v: 0, learningPath: 0 }, function(err, activity) {
             var result = _.assign({}, activity.toObject({ versionKey: false }), {

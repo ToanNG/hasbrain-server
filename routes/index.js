@@ -45,6 +45,8 @@ exports = module.exports = function(app) {
   // API
   app.use(keystone.middleware.api);
   app.post('/oauth/token', oauth.token);
+  app.get('/github/callback', routes.api.github.callback);
+  app.post('/github/exchange-token', routes.api.github.exchangeToken);
   app.all('/api/*', passport.authenticate('accessToken', { session: false }));
 
   app.get('/api/user/list', routes.api.user.list);
