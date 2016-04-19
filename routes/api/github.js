@@ -5,6 +5,7 @@ var keystone = require('keystone'),
 exports.callback = function(req, res, next) {
   var q = req.query,
       view = new keystone.View(req, res);
+  console.log(q);
 
   request
     .post('https://github.com/login/oauth/access_token')

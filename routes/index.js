@@ -64,6 +64,8 @@ exports = module.exports = function(app) {
 
   app.post('/api/circle/build', routes.api.circle.build);
 
+  app.get('/api/learning-path/list', routes.api.learningPath.list);
+
   // Error Handler
   app.use(function(err, req, res, next) {
     if (err.statusCode === 404) {

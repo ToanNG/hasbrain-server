@@ -47,10 +47,12 @@ exports.listActivity = function(req, res, next) {
 
 exports.create = function(req, res, next) {
   var item = new Enrollment.model({ student: req.user });
-
+  return res.status(200).apiResponse(item);
+  /*
   item.getUpdateHandler(req).process({ learningPath: req.body.learning_path }, function(err) {
     if (err) return next(err);
     
     return res.status(200).apiResponse(item);
   });
+  */
 }
