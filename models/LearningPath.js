@@ -12,6 +12,7 @@ LearningPath.add({
 });
 
 LearningPath.relationship({ ref: 'Course', path: 'courses', refPath: 'learningPath' });
+LearningPath.relationship({ ref: 'LearningNode', path: 'learningnodes', refPath: 'learningPath' });
 
 LearningPath.defaultColumns = 'sortOrder|10%, name, description';
 LearningPath.register();
