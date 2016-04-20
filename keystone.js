@@ -24,9 +24,7 @@ keystone.init({
 	
 	'auto update': true,
 	'session': true,
-	'auth': true,
-	'user model': 'User',
-	'cookie secret': 'Uvydevo68U2cf3PCicUh'
+	'auth': true
 
 });
 
