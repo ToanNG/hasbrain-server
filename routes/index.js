@@ -66,7 +66,7 @@ exports = module.exports = function(app) {
 
   app.get('/api/learning-path/list', routes.api.learningPath.list);
 
-  app.get('/api/learning-node/list', routes.api.learningNode.list);
+  app.get('/api/learning-node/:pathId', routes.api.learningNode.list);
 
   // Error Handler
   app.use(function(err, req, res, next) {
