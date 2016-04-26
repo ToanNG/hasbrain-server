@@ -91,7 +91,7 @@ keystone.set('nav', {
 	// 'enquiries': 'enquiries',
 	'users': 'users',
 	'clients': 'clients',
-	'courses': ['learning-paths', 'courses', 'activities'],
+	'courses': ['learning-paths', 'courses', 'activities', 'learning-nodes'],
 	'enrollments': 'enrollments',
 	'companies': 'companies',
 	'stories': 'stories'
