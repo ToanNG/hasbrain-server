@@ -8,7 +8,8 @@ var LearningPath = new keystone.List('LearningPath', {
 
 LearningPath.add({
   name: { type: String, required: true, index: true },
-  description: { type: Types.Textarea, height: 150 }
+  description: { type: Types.Textarea, height: 150 },
+  nodeTree: { type: Types.Textarea, hidden: true }
 });
 
 LearningPath.relationship({ ref: 'Course', path: 'courses', refPath: 'learningPath' });

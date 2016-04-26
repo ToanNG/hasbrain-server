@@ -65,6 +65,7 @@ exports = module.exports = function(app) {
   app.post('/api/circle/build', routes.api.circle.build);
 
   app.get('/api/learning-path/list', routes.api.learningPath.list);
+  app.get('/learning-path/:id', routes.api.learningPath.get)
 
   // Error Handler
   app.use(function(err, req, res, next) {

@@ -15,3 +15,15 @@ exports.list = function(req, res, next) {
       return next(err)
     });
 }
+
+exports.get = function(req, res, next) {
+  LearningPathModel.findById(req.params.id)
+    .lean()
+    .exec()
+    .then(function(item) {
+      item.nodeTree = JSON.parse(item.nodeTree);
+      return res.status(200).apiResponse(item);
+    }, function(err) {
+      return next(err)
+    });
+}

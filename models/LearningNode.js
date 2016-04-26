@@ -22,5 +22,37 @@ LearningNode.add({
 
 LearningNode.relationship({ ref: 'LearningNode', path: 'children', refPath: 'parent' });
 
+LearningNode.schema.post('save', function(node) {
+  LearningNode.model.find({ learningPath: node.learningPath })
+    .select({ __v: 0, learningPath: 0, sortOrder: 0 })
+    .populate('company', { __v: 0 })
+    .lean()
+    .exec()
+    .then(function(nodes) {
+      var LearningPathModel = keystone.list('LearningPath').model;
+      var tree = generateTree(nodes);
+
+      return LearningPathModel.update(
+        { _id: node.learningPath },
+        { $set: { nodeTree: JSON.stringify(tree) } },
+        { multi: true }
+      ).exec();
+    }, function(err) {
+      console.log(err)
+    });
+});
+
 LearningNode.defaultColumns = 'sortOrder|10%, name, description, learningPath, nodeType, parent';
 LearningNode.register();
+
+function generateTree(nodes, parentNode) {
+  var result = [];
+  nodes.forEach(function(node, i) {
+    if (!parentNode && !node.parent || parentNode && node.parent && node.parent.equals(parentNode._id)) {
+      var remain = nodes.slice(0, i).concat(nodes.slice(i + 1));
+      node.children = generateTree(remain, node);
+      result.push(node);
+    }
+  });
+  return result;
+}
