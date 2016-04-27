@@ -14,20 +14,21 @@ Activity.add({
   knowledge: { type: Types.Html, wysiwyg: true },
   estimation: { type: Types.Number, require: true },
   learningPath: { type: Types.Relationship, ref: 'LearningPath', index: true, initial: true },
-  course: { type: Types.Relationship, ref: 'Course', index: true, initial: true, filters: { 'learningPath': ':learningPath' } },
+  /*course: { type: Types.Relationship, ref: 'Course', index: true, initial: true, filters: { 'learningPath': ':learningPath' } },*/
+  learningNode: { type: Types.Relationship, ref: 'LearningNode', index: true, initial: true, filters: { learningPath : ':learningPath' } },
   no: { type: Types.Number, require: true, initial: true },
   tester: { type: String }
 });
 
-Activity.schema.path('course').validate(function(value, callback) {
-  if (this.course) {
-    keystone.list('Course').model.findById(value).exec(function(err, course) {
-      callback(course.learningPath.equals(this.learningPath));
+Activity.schema.path('learningNode').validate(function(value, callback) {
+  if (this.learningNode) {
+    keystone.list('LearningNode').model.findById(value).exec(function(err, learningNode) {
+      callback(learningNode.learningPath.equals(this.learningPath));
     }.bind(this));
   } else {
     callback(true);
   }
-}, 'Course is mismatched with learning path');
+}, 'Learning Node is mismatched with learning path');
 
-Activity.defaultColumns = 'sortOrder|10%, name|20%, no|10%, estimation, learningPath, course';
+Activity.defaultColumns = 'sortOrder|10%, name|20%, no|10%, estimation, learningPath, learningNode';
 Activity.register();

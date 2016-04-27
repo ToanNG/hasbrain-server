@@ -37,36 +37,38 @@ exports.todayStory = function(req, res, next) {
         });
     })
     .then(function(data) {
-      var uncompletedStory = _.find(data.stories, 'isCompleted', false),
-          completedActivities = _.pluck(data.stories, 'activity');
+      if( data ) {
+        var uncompletedStory = _.find(data.stories, 'isCompleted', false),
+            completedActivities = _.pluck(data.stories, 'activity');
 
-      if (uncompletedStory) {
-        return Activity.model.findOne({
-            _id: uncompletedStory.activity
-          })
-          .select({ __v: 0, tester: 0 })
-          .populate('company', { __v: 0 })
-          .populate('learningPath', { __v: 0 })
-          .populate('course', { __v: 0, learningPath: 0 })
-          .exec()
-          .then(function(story) {
-            return _.assign({}, story.toObject(), {
-              isCompleted: uncompletedStory.isCompleted,
-              startTime: uncompletedStory.startTime,
-              storyId: uncompletedStory._id
+        if (uncompletedStory) {
+          return Activity.model.findOne({
+              _id: uncompletedStory.activity
             })
-          });
-      } else {
-        return Activity.model.findOne({
-            _id: { $nin: completedActivities },
-            learningPath: data.enrollment.learningPath
-          })
-          .select({ __v: 0 })
-          .populate('company', { __v: 0 })
-          .populate('learningPath', { __v: 0 })
-          .populate('course', { __v: 0, learningPath: 0 })
-          .sort('no')
-          .exec();
+            .select({ __v: 0, tester: 0 })
+            .populate('company', { __v: 0 })
+            .populate('learningPath', { __v: 0 })
+            .populate('learningNode', { __v: 0, learningPath: 0 })
+            .exec()
+            .then(function(story) {
+              return _.assign({}, story.toObject(), {
+                isCompleted: uncompletedStory.isCompleted,
+                startTime: uncompletedStory.startTime,
+                storyId: uncompletedStory._id
+              })
+            });
+        } else {
+          return Activity.model.findOne({
+              _id: { $nin: completedActivities },
+              learningPath: data.enrollment.learningPath
+            })
+            .select({ __v: 0 })
+            .populate('company', { __v: 0 })
+            .populate('learningPath', { __v: 0 })
+            .populate('learningNode', { __v: 0, learningPath: 0 })
+            .sort('no')
+            .exec();
+        }
       }
     })
     .then(function(activity) {
