@@ -5,7 +5,7 @@ var async = require('async'),
 
 var Story = keystone.list('Story'),
     Enrollment = keystone.list('Enrollment'),
-    Activity = keystone.list('Activity');
+    LearningNode = keystone.list('LearningNode');
 
 function NotFound(message) {  
   Error.call(this);
@@ -41,13 +41,13 @@ exports.todayStory = function(req, res, next) {
           completedActivities = _.pluck(data.stories, 'activity');
 
       if (uncompletedStory) {
-        return Activity.model.findOne({
+        return LearningNode.model.findOne({
             _id: uncompletedStory.activity
           })
           .select({ __v: 0, tester: 0 })
           .populate('company', { __v: 0 })
           .populate('learningPath', { __v: 0 })
-          .populate('course', { __v: 0, learningPath: 0 })
+          //.populate('parent', { __v: 0, learningPath: 0 })
           .exec()
           .then(function(story) {
             return _.assign({}, story.toObject(), {
@@ -57,14 +57,14 @@ exports.todayStory = function(req, res, next) {
             })
           });
       } else {
-        return Activity.model.findOne({
+        return LearningNode.model.findOne({
             _id: { $nin: completedActivities },
             learningPath: data.enrollment.learningPath
           })
           .select({ __v: 0 })
           .populate('company', { __v: 0 })
           .populate('learningPath', { __v: 0 })
-          .populate('course', { __v: 0, learningPath: 0 })
+          //.populate('parent', { __v: 0, learningPath: 0 })
           .sort('no')
           .exec();
       }

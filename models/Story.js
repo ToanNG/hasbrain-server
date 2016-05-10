@@ -10,7 +10,7 @@ var Story = new keystone.List('Story', {
 
 Story.add({
   enrollment: { type: Types.Relationship, ref: 'Enrollment', required: true, initial: true },
-  activity: { type: Types.Relationship, ref: 'Activity', required: true, initial: true },
+  activity: { type: Types.Relationship, ref: 'LearningNode', required: true, initial: true },
   startTime: { type: Types.Datetime, default: Date.now },
   endTime: { type: Types.Datetime },
   isCompleted: { type: Boolean, default: false },
