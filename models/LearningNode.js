@@ -7,7 +7,7 @@ var LearningNode = new keystone.List('LearningNode', {
 });
 
 LearningNode.add({
-  name: { type: String, required: true, index: true },
+  name: { type: String, required: true, index: true, note: '* to refresh Coggle diagram, go to the learning path edit page, check refreshCoggleDiagram and save.' },
   description: { type: Types.Textarea, height: 150 },
   learningPath: { type: Types.Relationship, ref: 'LearningPath', index: true, required: true, initial: true },
   parent: { type: Types.Relationship, ref: 'LearningNode', filters: { nodeType: 'course' }, initial: true },
