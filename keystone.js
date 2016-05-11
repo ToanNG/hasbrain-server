@@ -89,13 +89,20 @@ keystone.set('email tests', require('./routes/emails'));
 
 keystone.set('nav', {
 	// 'enquiries': 'enquiries',
-	'users': 'users',
-	'clients': 'clients',
 	'courses': ['learning-paths', 'courses', 'activities', 'learning-nodes'],
 	'enrollments': 'enrollments',
-	'companies': 'companies',
-	'stories': 'stories'
+	'stories': 'stories',
+	'users': 'users',
+	'clients': 'clients',
+	'companies': 'companies'
 });
+
+// Redirect when authentication succeeds
+
+// keystone.set('signin redirect', function(user, req, res) {
+//   var url = user.isAdmin ? '/keystone' : '/teacher';
+//   res.redirect(url);
+// });
 
 // Start Keystone to connect to your database and initialise the web server
 

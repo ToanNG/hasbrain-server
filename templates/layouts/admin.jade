@@ -1,0 +1,44 @@
+include ../mixins/flash-messages
+
+doctype html
+html
+
+  head
+    meta(charset="utf-8")
+    meta(name="viewport", content="initial-scale=1.0,user-scalable=no,maximum-scale=1,width=device-width")
+    meta(http-equiv="X-UA-Compatible" content="IE=edge")
+
+    title= title || 'hasBrain'
+    link(href="/keystone/styles/keystone.min.css", rel="stylesheet")
+    link(rel="shortcut icon", href="/favicon.ico", type="image/x-icon")
+
+  body
+    #wrap
+      nav#header.navbar.navbar-default.navbar-static-top(role="navigation")
+        .container
+          a.navbar-backtobrand-trigger.hidden-xs(href="/"): span.ion-arrow-left-c
+          .navbar-backtobrand-message Back to the hasBrain website
+          .navbar-header
+            button.navbar-toggle(type="button", data-toggle="collapse", data-target=".navbar-headernav-collapse")
+              span.sr-only Toggle section navigation
+              span.icon-bar
+              span.icon-bar
+              span.icon-bar
+            a.navbar-brand(href="/teacher") hasBrain
+          .collapse.navbar-collapse.navbar-headernav-collapse
+            ul.nav.navbar-nav.navbar-right
+              li: a(href="/keystone/signout") Sign Out
+            ul.nav.navbar-nav
+              li: a(href="#") Learning Paths
+              li: a(href="#") Learning Nodes
+
+      #body
+        +flash-messages(messages)
+
+        block content
+
+    script(src="/js/jquery/jquery-1.11.2.min.js")
+    script(src="/js/bootstrap/bootstrap-3.3.4.min.js")
+    script(src="/keystone/js/common/ui.js")
+
+    block js

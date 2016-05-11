@@ -30,7 +30,19 @@ exports.initLocals = function(req, res, next) {
 	
 	locals.user = req.user;
 	
-	next();
+	var indexOfUsers = req.path.indexOf('/keystone/users'),
+			indexOfClients = req.path.indexOf('/keystone/clients'),
+			indexOfCompanies = req.path.indexOf('/keystone/companies');
+
+	if (indexOfUsers == 0 || indexOfClients == 0 || indexOfCompanies == 0) {
+		if (req.user.isSuperAdmin) {
+			next();
+		} else {
+			res.render('errors/403')
+		}
+	} else {
+		next();
+	}
 	
 };
 

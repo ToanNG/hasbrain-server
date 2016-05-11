@@ -14,7 +14,8 @@ User.add({
 	password: { type: Types.Password },
 	avatar: { type: String }
 }, 'Permissions', {
-	isAdmin: { type: Boolean, label: 'Can access Keystone', index: true }
+	isAdmin: { type: Boolean, label: 'Admin', index: true },
+	isSuperAdmin: { type: Boolean, label: 'Super admin', index: true }
 });
 
 // Provide access to Keystone
@@ -26,5 +27,5 @@ User.schema.virtual('canAccessKeystone').get(function() {
  * Registration
  */
 
-User.defaultColumns = 'name, email, isAdmin';
+User.defaultColumns = 'name, email, isAdmin, isSuperAdmin';
 User.register();

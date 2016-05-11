@@ -31,16 +31,17 @@ keystone.pre('render', middleware.flashMessages);
 
 // Import Route Controllers
 var routes = {
-	views: importRoutes('./views'),
+  views: importRoutes('./views'),
   api: importRoutes('./api')
 };
 
 // Setup Route Bindings
 exports = module.exports = function(app) {
-	
-	// Views
-	app.get('/', routes.views.index);
-	app.all('/contact', routes.views.contact);
+  
+  // Views
+  app.get('/', routes.views.index);
+  app.all('/contact', routes.views.contact);
+  app.get('/teacher', middleware.requireUser, routes.views.teacher);
 
   // API
   app.use(keystone.middleware.api);
@@ -78,8 +79,8 @@ exports = module.exports = function(app) {
     // If no statusCode, default case is database error.
     return res.status(500).apiError('Database error', err.message);
   });
-	
-	// NOTE: To protect a route so that only admins can see it, use the requireUser middleware:
-	// app.get('/protected', middleware.requireUser, routes.views.protected);
-	
+  
+  // NOTE: To protect a route so that only admins can see it, use the requireUser middleware:
+  // app.get('/protected', middleware.requireUser, routes.views.protected);
+  
 };
