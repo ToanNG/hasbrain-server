@@ -47,6 +47,8 @@ exports = module.exports = function(app) {
   app.post('/oauth/token', oauth.token);
   app.get('/github/callback', routes.api.github.callback);
   app.post('/github/exchange-token', routes.api.github.exchangeToken);
+  app.get('/coggle/callback', routes.api.coggle.callback);
+  app.get('/coggle/draw-tree', routes.api.coggle.drawTree);
   app.all('/api/*', passport.authenticate('accessToken', { session: false }));
 
   app.get('/api/user/list', routes.api.user.list);
@@ -70,11 +72,11 @@ exports = module.exports = function(app) {
   // Error Handler
   app.use(function(err, req, res, next) {
     if (err.statusCode === 404) {
-      return res.status(404).send({ error: 'Not found', detail: err });
+      return res.status(404).send({ error: 'Not found', detail: err.message });
     }
 
     // If no statusCode, default case is database error.
-    return res.status(500).apiError('Database error', err);
+    return res.status(500).apiError('Database error', err.message);
   });
 	
 	// NOTE: To protect a route so that only admins can see it, use the requireUser middleware:
