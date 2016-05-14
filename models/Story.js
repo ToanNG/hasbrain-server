@@ -2,15 +2,19 @@ var keystone = require('keystone');
 var Types = keystone.Field.Types;
 
 var Story = new keystone.List('Story', {
-  nocreate: true,
+  nocreate: false,
   noedit: false,
   nodelete: false,
-  hidden: false
+  hidden: false,
+  track: {
+    createdAt: true,
+    updatedAt: true
+  }
 });
 
 Story.add({
   enrollment: { type: Types.Relationship, ref: 'Enrollment', required: true, initial: true },
-  activity: { type: Types.Relationship, ref: 'Activity', required: true, initial: true },
+  activity: { type: Types.Relationship, ref: 'LearningNode', required: true, initial: true, filters: { 'nodeType': 'activity' } },
   startTime: { type: Types.Datetime, default: Date.now },
   endTime: { type: Types.Datetime },
   isCompleted: { type: Boolean, default: false },

@@ -24,15 +24,19 @@ exports.create = {
 		{ name: 'iOS', __ref: 'ios' }
 	],
 
-	Course: [
-		{ name: 'Javascript Fundamental', learningPath: 'front_end', __ref: 'js_fundamental', 'cover.url': 'http://acmcsku.org/wp-content/uploads/javascript-event-acm-banner.jpg' }
-	],
-
-	Activity: [
+	LearningNode: [
+		{
+			name: 'Javascript Fundamental',
+			nodeType: 'course',
+			learningPath: 'front_end',
+			'cover.url': 'http://www.crossmediaconsultancy.co.uk/wp-content/uploads/2015/09/javascript-logo-banner.jpg',
+			__ref: 'js_fundamental'
+		},
 		{
 			name: 'Arguments',
+			nodeType: 'activity',
 			learningPath: 'front_end',
-			course: 'js_fundamental',
+			parent: 'js_fundamental',
 			description: 'Learn what argument is in Javascript.',
 			problem: '<p>Implement a function that returns the sum of its parameters. For example:</p> <pre><code class="language-javascript">sum(2, 4, 6) // =&gt; 12</code></pre> <p>You can get the code boilerplate <a href="#">here</a>.</p>',
 			knowledge: '<p>The arguments object is an Array-like object corresponding to the arguments passed to a function. It is similar to an Array, but does not have any Array properties except length. However it can be converted to a real Array:</p><pre><code class="language-javascript">var args = Array.prototype.slice.call(arguments);</code></pre><p>Watch the following video for more details</p><p><iframe src="https://www.youtube.com/embed/cBzwch3mqxA" width="560" height="315" frameborder="0" allowfullscreen=""></iframe></p>',

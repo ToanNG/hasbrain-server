@@ -89,7 +89,7 @@ keystone.set('email tests', require('./routes/emails'));
 
 keystone.set('nav', {
 	// 'enquiries': 'enquiries',
-	'courses': ['learning-paths', 'courses', 'activities', 'learning-nodes'],
+	'courses': ['learning-paths', 'learning-nodes'],
 	'enrollments': 'enrollments',
 	'stories': 'stories',
 	'users': 'users',

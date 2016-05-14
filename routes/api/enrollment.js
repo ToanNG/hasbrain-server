@@ -2,10 +2,9 @@ var async = require('async'),
     keystone = require('keystone'),
     _ = require('lodash');
 
-var Enrollment = keystone.list('Enrollment'),
-    Course = keystone.list('Course'),
+var Enrollment = keystone.list('Enrollment')
     Story = keystone.list('Story'),
-    Activity = keystone.list('Activity');
+    LearningNode = keystone.list('LearningNode');
 
 exports.listStory = function(req, res, next) {
   var isCompleted = req.query.is_completed,
@@ -31,10 +30,13 @@ exports.listActivity = function(req, res, next) {
     .populate('learningPath')
     .exec()
     .then(function(enrollment) {
-      return Activity.model.find({ learningPath: enrollment.learningPath._id })
+      return LearningNode.model.find({
+          learningPath: enrollment.learningPath._id,
+          nodeType: 'activity'
+        })
         .select({ __v: 0 })
         .populate('learningPath', { __v: 0 })
-        .populate('course', { __v: 0, learningPath: 0 })
+        .populate('parent', { __v: 0, learningPath: 0 })
         .exec();
     })
     .then(function(activities) {

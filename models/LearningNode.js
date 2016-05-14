@@ -9,9 +9,12 @@ var LearningNode = new keystone.List('LearningNode', {
 LearningNode.add({
   name: { type: String, required: true, index: true, note: '* to refresh Coggle diagram, go to the learning path edit page, check refreshCoggleDiagram and save.' },
   description: { type: Types.Textarea, height: 150 },
-  learningPath: { type: Types.Relationship, ref: 'LearningPath', index: true, required: true, initial: true },
+  learningPath: { type: Types.Relationship, ref: 'LearningPath', index: true, initial: true },
   parent: { type: Types.Relationship, ref: 'LearningNode', filters: { nodeType: 'course' }, initial: true },
   nodeType: { type: Types.Select, options: 'course, activity', default: 'activity', required: true, initial: true },
+  cover: {
+    url: { type: String, dependsOn: { nodeType: 'course' } }
+  },
   company: { type: Types.Relationship, ref: 'Company', index: true, dependsOn: { nodeType: 'activity' } },
   problem: { type: Types.Html, wysiwyg: true, dependsOn: { nodeType: 'activity' } },
   knowledge: { type: Types.Html, wysiwyg: true, dependsOn: { nodeType: 'activity' } },
@@ -42,7 +45,7 @@ LearningNode.schema.post('save', function(node) {
     });
 });
 
-LearningNode.defaultColumns = 'sortOrder|10%, name, description, learningPath, nodeType, parent';
+LearningNode.defaultColumns = 'no|10%, name, description, learningPath, nodeType, parent';
 LearningNode.register();
 
 function generateTree(nodes, parentNode) {

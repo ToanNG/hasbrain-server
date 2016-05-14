@@ -5,7 +5,7 @@ var async = require('async'),
 
 var Story = keystone.list('Story'),
     Enrollment = keystone.list('Enrollment'),
-    Activity = keystone.list('Activity');
+    LearningNode = keystone.list('LearningNode');
 
 function NotFound(message) {  
   Error.call(this);
@@ -25,47 +25,61 @@ exports.todayStory = function(req, res, next) {
       if (!enrollment)
         return next(new NotFound('Enrollment not found'));
 
-      return Story.model.find({
+      return Story.model.findOne({
           enrollment: enrollment._id
         })
+        .sort('-createdAt')
+        .populate('activity', '_id no')
         .exec()
-        .then(function(stories) {
+        .then(function(latestStory) {
           return {
-            stories: stories,
+            latestStory: latestStory,
             enrollment: enrollment
           };
         });
     })
     .then(function(data) {
-      var uncompletedStory = _.find(data.stories, 'isCompleted', false),
-          completedActivities = _.pluck(data.stories, 'activity');
+      var latestStory = data.latestStory,
+          enrollment = data.enrollment;
 
-      if (uncompletedStory) {
-        return Activity.model.findOne({
-            _id: uncompletedStory.activity
+      if (!latestStory) {
+        return LearningNode.model.findOne({
+            learningPath: enrollment.learningPath,
+            nodeType: 'activity'
+          })
+          .sort('no')
+          .select({ __v: 0, tester: 0 })
+          .populate('company', { __v: 0 })
+          .populate('learningPath', { __v: 0, nodeTree: 0, diagram: 0 })
+          .populate('parent', { __v: 0, learningPath: 0 })
+          .exec();
+      }
+
+      if (!latestStory.isCompleted) {
+        return LearningNode.model.findOne({
+            _id: latestStory.activity._id
           })
           .select({ __v: 0, tester: 0 })
           .populate('company', { __v: 0 })
-          .populate('learningPath', { __v: 0 })
-          .populate('course', { __v: 0, learningPath: 0 })
+          .populate('learningPath', { __v: 0, nodeTree: 0, diagram: 0 })
+          .populate('parent', { __v: 0, learningPath: 0 })
           .exec()
-          .then(function(story) {
-            return _.assign({}, story.toObject(), {
-              isCompleted: uncompletedStory.isCompleted,
-              startTime: uncompletedStory.startTime,
-              storyId: uncompletedStory._id
+          .then(function(activity) {
+            return _.assign({}, activity.toObject(), {
+              isCompleted: latestStory.isCompleted,
+              startTime: latestStory.startTime,
+              storyId: latestStory._id
             })
           });
       } else {
-        return Activity.model.findOne({
-            _id: { $nin: completedActivities },
-            learningPath: data.enrollment.learningPath
+        return LearningNode.model.findOne({
+            no: { $gt: latestStory.activity.no }
           })
-          .select({ __v: 0 })
-          .populate('company', { __v: 0 })
-          .populate('learningPath', { __v: 0 })
-          .populate('course', { __v: 0, learningPath: 0 })
           .sort('no')
+          .select({ __v: 0, tester: 0 })
+          .populate('company', { __v: 0 })
+          .populate('learningPath', { __v: 0, nodeTree: 0, diagram: 0 })
+          .populate('parent', { __v: 0, learningPath: 0 })
           .exec();
       }
     })
@@ -109,8 +123,8 @@ exports.create = function(req, res, next) {
       item.populate('activity', function(err, story) {
         story.activity
           .populate('company', { __v: 0 })
-          .populate('learningPath', { __v: 0 })
-          .populate('course', { __v: 0, learningPath: 0 }, function(err, activity) {
+          .populate('learningPath', { __v: 0, nodeTree: 0, diagram: 0 })
+          .populate('parent', { __v: 0, learningPath: 0 }, function(err, activity) {
             var result = _.assign({}, activity.toObject({ versionKey: false }), {
               isCompleted: story.isCompleted,
               startTime: story.startTime,

@@ -16,7 +16,7 @@ LearningPath.add({
   refreshCoggleDiagram: { type: Boolean }
 });
 
-LearningPath.relationship({ ref: 'Course', path: 'courses', refPath: 'learningPath' });
+LearningPath.relationship({ ref: 'LearningNode', path: 'courses', refPath: 'learningPath' });
 
 LearningPath.schema.pre('save', function(next) {
   if (this.refreshCoggleDiagram) {
