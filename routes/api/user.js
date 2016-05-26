@@ -27,7 +27,7 @@ exports.me = function(req, res, next) {
     })
     .select({ __v: 0 })
     .populate('student', { __v: 0, password: 0, isAdmin: 0, isSuperAdmin: 0 })
-    .populate('learningPath', '_id name')
+    .populate('learningPath', '_id name nodeTree')
     .limit(1)
     .lean()
     .exec()

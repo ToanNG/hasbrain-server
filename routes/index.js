@@ -70,6 +70,10 @@ exports = module.exports = function(app) {
   app.get('/api/learning-path/list', routes.api.learningPath.list);
   app.get('/learning-path/:id', routes.api.learningPath.get)
 
+  app.get('/api/learning-node/list', routes.api.learningNode.list);
+  app.get('/api/learning-node/today', routes.api.learningNode.getTodayLearningNode);
+  app.get('/api/learning-node/today/:learningNode', routes.api.learningNode.getTodayLearningNode);
+
   // Error Handler
   app.use(function(err, req, res, next) {
     if (err.statusCode === 404) {
