@@ -8,8 +8,9 @@ var Company = new keystone.List('Company', {
 
 Company.add({
   name: { type: Types.Text, required: true, initial: true, index: true },
-  email: { type: Types.Email, required: true, initial: true, index: true }
+  email: { type: Types.Email, required: true, initial: true, index: true },
+  contact: { type: Types.Url, required: true, initial: true, index: true }
 });
 
-Company.defaultColumns = 'name, email';
+Company.defaultColumns = 'name, email, contact';
 Company.register();

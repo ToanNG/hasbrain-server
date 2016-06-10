@@ -152,3 +152,30 @@ exports.complete = function(req, res, next) {
     });
   });
 }
+
+exports.completeStory = function(req, res, next){
+  Enrollment.model.findOne({
+    student: req.user._id,
+    isActive: true
+  })
+  .exec()
+  .then(function(enrollment){
+    if(!enrollment){
+      return next(new NotFound('Enrollment not found'));
+    }
+
+    return Story.model.find({
+      enrollment: enrollment._id,
+      isCompleted: true
+    })
+    .sort('-createdAt')
+    .populate('activity', '_id no')
+    .exec();
+  })
+  .then(function(stories){
+    return res.status(200).apiResponse(stories);
+  })
+  .then(null, function(err){
+    return next(err);
+  });
+}

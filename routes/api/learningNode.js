@@ -3,8 +3,8 @@ var async = require('async'),
 	_ = require('lodash');
 
 var LearningNodeModel = keystone.list('LearningNode').model,
-    Enrollment = keystone.list('Enrollment'),
-    Story = keystone.list('Story');
+    EnrollmentModel = keystone.list('Enrollment'),
+    StoryModel = keystone.list('Story');
 
 function NotFound(message) {  
 	Error.call(this);
@@ -34,7 +34,7 @@ exports.getTodayLearningNode = function(req, res, next) {
 	  	-- -- if exist, get current learningNode
 	  	-- -- if not, get next learningNode in node tree.
 	  	*/
-	  	Enrollment.model.findOne({
+	  	EnrollmentModel.findOne({
 	  		student: req.user._id,
 	      	isActive: true
 	    })
@@ -43,7 +43,7 @@ exports.getTodayLearningNode = function(req, res, next) {
 	      if (!enrollment)
 	    	return next(new NotFound('Enrollment not found'));
 
-	      	return Story.model.find({
+	      	return StoryModel.find({
 	          	enrollment: enrollment._id
 	    	})
 	        .exec()

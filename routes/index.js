@@ -58,6 +58,7 @@ exports = module.exports = function(app) {
   app.get('/api/story/today', routes.api.story.todayStory);
   app.post('/api/story/create', routes.api.story.create);
   app.post('/api/story/:id/complete', routes.api.story.complete);
+  app.get('/api/story/complete', routes.api.story.completeStory);
 
   app.get('/api/enrollment/:id/activity/list', routes.api.enrollment.listActivity);
   app.get('/api/enrollment/:id/story/list', routes.api.enrollment.listStory);
