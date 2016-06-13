@@ -30,6 +30,7 @@ LearningNode.schema.post('save', function(node) {
     .select({ __v: 0, learningPath: 0, sortOrder: 0 })
     .populate('company', { __v: 0 })
     .lean()
+    .sort('sortOrder')
     .exec()
     .then(function(nodes) {
       var LearningPathModel = keystone.list('LearningPath').model;
