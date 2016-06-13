@@ -57,6 +57,7 @@ exports.todayStory = function(req, res, next) {
 
       if (!latestStory.isCompleted) {
         return LearningNode.model.findOne({
+            learningPath: enrollment.learningPath,
             _id: latestStory.activity._id
           })
           .select({ __v: 0, tester: 0 })
@@ -72,7 +73,9 @@ exports.todayStory = function(req, res, next) {
             })
           });
       } else {
+        console.log(latestStory.activity);
         return LearningNode.model.findOne({
+            learningPath: enrollment.learningPath,
             no: { $gt: latestStory.activity.no }
           })
           .sort('no')
