@@ -95,8 +95,9 @@ function addNode(source, details) {
         count = 0;
 
     source.forEach(function(node) {
-      var text = node.name;
-      // var text = '[' + node.name + '](http://localhost:3000/keystone/learning-nodes/' + node._id + ')';
+      //var text = node.name;
+      //var text = '[' + node.name + '](http://localhost:3000/keystone/learning-nodes/' + node._id + ')';
+      var text = '[' + node.name + '](http://52.74.99.100/keystone/learning-nodes/' + node._id + ')';
 
       request
         .post('https://coggle.it/api/1/diagrams/' + diagram + '/nodes')

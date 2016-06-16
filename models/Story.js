@@ -1,11 +1,8 @@
 var keystone = require('keystone');
 var Types = keystone.Field.Types;
 
-var Story = new keystone.List('Story', {
+const Story = new keystone.List('Story', {
   nocreate: false,
-  noedit: false,
-  nodelete: false,
-  hidden: false,
   track: {
     createdAt: true,
     updatedAt: true
@@ -13,12 +10,13 @@ var Story = new keystone.List('Story', {
 });
 
 Story.add({
-  enrollment: { type: Types.Relationship, ref: 'Enrollment', required: true, initial: true },
+  enrollment: { type: Types.Relationship, ref: 'Enrollment', filters: { isActive: true }, required: true, initial: true },
   activity: { type: Types.Relationship, ref: 'LearningNode', required: true, initial: true, filters: { 'nodeType': 'activity' } },
-  startTime: { type: Types.Datetime, default: Date.now },
+  startTime: { type: Types.Datetime },
   endTime: { type: Types.Datetime },
-  isCompleted: { type: Boolean, default: false },
   attempts: { type: Number, default: 0 }
+}, 'Status', {
+  isCompleted: { type: Types.Boolean }
 });
 
 Story.schema.index({ enrollment: 1, activity: 1 }, { unique: true });

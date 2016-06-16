@@ -10,7 +10,7 @@ LearningNode.add({
   name: { type: String, required: true, index: true, note: '* to refresh Coggle diagram, go to the learning path edit page, check refreshCoggleDiagram and save.' },
   description: { type: Types.Textarea, height: 150 },
   learningPath: { type: Types.Relationship, ref: 'LearningPath', index: true, initial: true },
-  parent: { type: Types.Relationship, ref: 'LearningNode', filters: { nodeType: 'course' }, initial: true },
+  parent: { type: Types.Relationship, ref: 'LearningNode', filters: { learningPath: ':learningPath', nodeType: 'course' } },
   nodeType: { type: Types.Select, options: 'course, activity', default: 'activity', required: true, initial: true },
   cover: {
     url: { type: String, dependsOn: { nodeType: 'course' } }
@@ -20,17 +20,19 @@ LearningNode.add({
   knowledge: { type: Types.Html, wysiwyg: true, dependsOn: { nodeType: 'activity' } },
   estimation: { type: Types.Number, dependsOn: { nodeType: 'activity' } },
   no: { type: Types.Number, dependsOn: { nodeType: 'activity' } },
-  tester: { type: String, dependsOn: { nodeType: 'activity' } }
+  tester: { type: String, dependsOn: { nodeType: 'activity' } },
+  dependency: { type: Types.Relationship, ref: 'LearningNode', many: true }
 });
 
 LearningNode.relationship({ ref: 'LearningNode', path: 'children', refPath: 'parent' });
+LearningNode.relationship({ ref: 'LearningNode', path: 'requiredNode', refPath: 'dependency' });
 
 LearningNode.schema.post('save', function(node) {
   LearningNode.model.find({ learningPath: node.learningPath })
     .select({ __v: 0, learningPath: 0, sortOrder: 0 })
     .populate('company', { __v: 0 })
     .lean()
-    .sort('sortOrder')
+    .sort('no')
     .exec()
     .then(function(nodes) {
       var LearningPathModel = keystone.list('LearningPath').model;

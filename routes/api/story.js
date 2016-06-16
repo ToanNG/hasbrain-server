@@ -73,7 +73,6 @@ exports.todayStory = function(req, res, next) {
             })
           });
       } else {
-        console.log(latestStory.activity);
         return LearningNode.model.findOne({
             learningPath: enrollment.learningPath,
             no: { $gt: latestStory.activity.no }
@@ -88,6 +87,43 @@ exports.todayStory = function(req, res, next) {
     })
     .then(function(activity) {
       return res.status(200).apiResponse(activity);
+    })
+    .then(null, function(err) {
+      return next(err);
+    });
+}
+
+exports.giveUp = function(req, res, next) {
+  Enrollment.model.findOne({
+      student: req.user._id,
+      isActive: true
+    })
+    .exec()
+    .then(function(enrollment) {
+      if (!enrollment)
+        return next(new NotFound('Enrollment not found'));
+
+      return Story.model.find({
+          $and: [
+            { enrollment: enrollment._id },
+            { activity: req.body.activity },
+            { endTime : {$exists: false} }
+          ]
+        })
+        .sort({createdAt : -1})
+        .limit(1)
+        .exec()
+        .then(function(story) {
+          if (!story) return next(new NotFound('Story not found'));
+          return story;
+        });
+    })
+    .then(function(story) {
+      story.getUpdateHandler(req).process({ isCompleted: true }, function(err) {
+          if (err) return next(err);
+          
+          return res.status(200).apiResponse(story);
+      });
     })
     .then(null, function(err) {
       return next(err);
