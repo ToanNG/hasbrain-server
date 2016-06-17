@@ -89,28 +89,28 @@ exports.create = function(req, res, next) {
     if(item.activity.nodeType === 'activity') {
       return item;
     } else {
+      console.log('Search another node because the choosen node is course');
       return LearningNode.model.findOne({
           learningPath: item.enrollment.learningPath,
           nodeType: 'activity',
-          parent: item.activity._id
+          parent: item.activity._id,
+          dependency : []
         })
         .sort('no')
         .exec()
         .then(function(node){
           if(!node) return next(new NotFound('Learning node not found'));
-
           return { activity : node, enrollment : item.enrollment };
         });
     }
   })
   .then(function(item){
+    if(!item) return next(new NotFound('Item not found'));
     return Story.model.create({
       enrollment: item.enrollment._id,
       activity: item.activity._id
-    });
-  })
-  .then(function(item) {
-    item.populate('activity', function(err, story) {
+    })
+    .populate('activity', function(err, story) {
       story.activity
         .populate('company', { __v: 0 })
         .populate('learningPath', { __v: 0, nodeTree: 0, diagram: 0 })
