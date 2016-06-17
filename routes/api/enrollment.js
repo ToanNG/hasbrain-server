@@ -93,8 +93,7 @@ exports.create = function(req, res, next) {
       return LearningNode.model.findOne({
           learningPath: item.enrollment.learningPath,
           nodeType: 'activity',
-          parent: item.activity._id,
-          dependency : []
+          parent: item.activity._id
         })
         .sort('no')
         .exec()
