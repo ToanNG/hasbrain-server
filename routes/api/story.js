@@ -35,6 +35,7 @@ exports.todayStory = function(req, res, next) {
         .populate('activity', '_id no')
         .exec()
         .then(function(latestStory) {
+          if (!latestStory) return next(new NotFound('Story not found'));
           return {
             latestStory: latestStory,
             enrollment: enrollment
@@ -44,8 +45,6 @@ exports.todayStory = function(req, res, next) {
     .then(function(data) {
       var latestStory = data.latestStory,
           enrollment = data.enrollment;
-
-      if (!latestStory) return next(new NotFound('Story not found'));
 
       return LearningNode.model.findOne({
         learningPath: enrollment.learningPath,

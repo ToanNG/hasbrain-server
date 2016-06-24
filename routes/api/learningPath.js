@@ -43,7 +43,7 @@ exports.me = function(req, res, next) {
     .lean()
     .exec()
     .then(function(enrollments) {
-      return res.status(200).apiResponse(enrollments);
+      return res.status(200).apiResponse({enrollments : enrollments});
     }, function(err) {
       return next(err);
     });
