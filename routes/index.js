@@ -60,6 +60,7 @@ exports = module.exports = function(app) {
   app.post('/api/story/:id/complete', routes.api.story.complete);
   app.get('/api/story/complete', routes.api.story.completeStory);
   app.post('/api/story/giveup', routes.api.story.giveUp);
+  app.post('/api/story/start', routes.api.story.start);
 
   app.get('/api/enrollment/:id/activity/list', routes.api.enrollment.listActivity);
   app.get('/api/enrollment/:id/story/list', routes.api.enrollment.listStory);
@@ -70,7 +71,8 @@ exports = module.exports = function(app) {
   app.post('/api/circle/build', routes.api.circle.build);
 
   app.get('/api/learning-path/list', routes.api.learningPath.list);
-  app.get('/learning-path/:id', routes.api.learningPath.get)
+  app.get('/api/learning-path/me', routes.api.learningPath.me);
+  //app.get('/api/learning-path/:id', routes.api.learningPath.get);
 
   app.get('/api/learning-node/list', routes.api.learningNode.list);
   app.get('/api/learning-node/today', routes.api.learningNode.getTodayLearningNode);

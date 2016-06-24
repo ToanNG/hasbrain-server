@@ -3,6 +3,7 @@ var async = require('async'),
     _ = require('lodash');
 
 var LearningPathModel = keystone.list('LearningPath').model;
+var EnrollmentModel = keystone.list('Enrollment').model;
 
 exports.list = function(req, res, next) {
   LearningPathModel.find()
@@ -22,32 +23,27 @@ exports.get = function(req, res, next) {
     .exec()
     .then(function(item) {
       item.nodeTree = JSON.parse(item.nodeTree);
-      return res.status(200).apiResponse(item);
+      return res.status(200).apiResponse({
+        learningPath: item
+      });
     }, function(err) {
       return next(err)
     });
 }
 
 exports.me = function(req, res, next) {
-  EnrollmentModel.find({
+  EnrollmentModel.findOne({
       $and: [
         { student: req.user._id },
         { isActive: true }
       ]
     })
     .select({ __v: 0 })
-    .populate('student', { __v: 0, password: 0, isAdmin: 0, isSuperAdmin: 0 })
-    .populate('learningPath', '_id name')
-    .limit(1)
+    .populate('learningPath', '_id name nodeTree')
     .lean()
     .exec()
     .then(function(enrollments) {
-      if (!enrollments.length)
-        return res.status(200).apiResponse(_.omit(req.user.toObject(), ['__v', 'password', 'isAdmin']));
-
-      var cleanedEnrollments = _.invokeMap(enrollments, function() { return _.omit(this, 'student') });
-      var data = _.assign({}, enrollments[0].student, { enrollments: cleanedEnrollments });
-      return res.status(200).apiResponse(data);
+      return res.status(200).apiResponse(enrollments);
     }, function(err) {
       return next(err);
     });

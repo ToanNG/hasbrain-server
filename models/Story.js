@@ -19,7 +19,7 @@ Story.add({
   isCompleted: { type: Types.Boolean }
 });
 
-Story.schema.index({ enrollment: 1, activity: 1 }, { unique: true });
+//Story.schema.index({ enrollment: 1, activity: 1 }, { unique: true });
 
 Story.schema.pre('save', function(next) {
     if (this.isCompleted && !this.endTime) {

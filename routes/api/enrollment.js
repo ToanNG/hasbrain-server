@@ -107,7 +107,7 @@ exports.create = function(req, res, next) {
     if(!item) return next(new NotFound('Item not found'));
     return Story.model.create({
       enrollment: item.enrollment._id,
-      activity: item.activity._id
+      activity: item.activity._id,
     })
     .populate('activity', function(err, story) {
       story.activity
