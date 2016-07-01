@@ -77,7 +77,7 @@ exports.getTodayLearningNode = function(req, res, next) {
 		            learningPath: data.enrollment.learningPath,
 		            nodeType : 'activity'
 	          	})
-				.sort('sortOrder')
+				.sort('function')
 				.exec();
 	  		}
 	    })

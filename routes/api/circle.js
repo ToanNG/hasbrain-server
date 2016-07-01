@@ -4,8 +4,8 @@ var async = require('async'),
     request = require('superagent'),
     pubnub = require('pubnub')({
       ssl: true,
-      publish_key: 'pub-c-f2f74db9-1fb1-4376-8f86-89013b0903fd',
-      subscribe_key: 'sub-c-9f9d4258-b37e-11e5-9848-0619f8945a4f'
+      publish_key: 'pub-c-8807fd6d-6f87-486f-9fd6-5869bc37e93a',
+      subscribe_key: 'sub-c-861f96a2-3c20-11e6-9236-02ee2ddab7fe',
     });
 
 var Story = keystone.list('Story');

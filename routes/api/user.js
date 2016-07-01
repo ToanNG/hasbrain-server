@@ -1,6 +1,16 @@
 var async = require('async'),
     keystone = require('keystone'),
-    _ = require('lodash');
+    _ = require('lodash'),
+    pubnub = require('pubnub')({
+      publish_key: 'pub-c-8807fd6d-6f87-486f-9fd6-5869bc37e93a',
+      subscribe_key: 'sub-c-861f96a2-3c20-11e6-9236-02ee2ddab7fe',
+    });
+    /*
+    pubnub.publish({ 
+      channel: 'hasbrain_test_' + req.user._id,
+      message: { text: 'Test subcribe pubnub' }
+    });
+    */
 
 var UserModel = keystone.list('User').model,
     EnrollmentModel = keystone.list('Enrollment').model;
@@ -37,6 +47,7 @@ exports.me = function(req, res, next) {
 
       var cleanedEnrollments = _.invokeMap(enrollments, function() { return _.omit(this, 'student') });
       var data = _.assign({}, enrollments[0].student, { enrollments: cleanedEnrollments });
+
       return res.status(200).apiResponse(data);
     }, function(err) {
       return next(err);

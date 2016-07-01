@@ -78,6 +78,8 @@ exports = module.exports = function(app) {
   app.get('/api/learning-node/today', routes.api.learningNode.getTodayLearningNode);
   app.get('/api/learning-node/today/:learningNode', routes.api.learningNode.getTodayLearningNode);
 
+  app.get('/api/pairing/me', routes.api.pairing.getPartner);
+
   // Error Handler
   app.use(function(err, req, res, next) {
     if (err.statusCode === 404) {

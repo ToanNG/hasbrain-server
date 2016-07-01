@@ -92,6 +92,7 @@ keystone.set('nav', {
 	'courses': ['learning-paths', 'learning-nodes'],
 	'enrollments': 'enrollments',
 	'stories': 'stories',
+	'pairing': 'pairings',
 	'users': 'users',
 	'clients': 'clients',
 	'companies': 'companies'
