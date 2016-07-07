@@ -22,7 +22,7 @@ exports.build = function(req, res, next) {
   Story.model.findById(req.body.story)
     .select({ __v: 0 })
     .populate('enrollment', 'student')
-    .populate('activity', 'tester no')
+    .populate('activity', 'tester no activityId')
     .exec(function(err, story) {
       if (err) return next(err);
       if (!story) return next(new NotFound('Story not found'));
@@ -34,7 +34,7 @@ exports.build = function(req, res, next) {
           build_parameters: {
             TARGET_REPO: req.body.repo,
             STORY_ID: story._id,
-            ACTIVITY_NO: story.activity.no
+            ACTIVITY_ID: story.activity.activityId
           }
         })
         .set('Content-Type', 'application/json')

@@ -20,6 +20,7 @@ LearningNode.add({
   knowledge: { type: Types.Html, wysiwyg: true, dependsOn: { nodeType: 'activity' } },
   estimation: { type: Types.Number, dependsOn: { nodeType: 'activity' } },
   no: { type: Types.Number, dependsOn: { nodeType: 'activity' } },
+  activityId : { type: String, dependsOn: { nodeType: 'activity' } },
   tester: { type: String, dependsOn: { nodeType: 'activity' } },
   dependency: { type: Types.Relationship, ref: 'LearningNode', many: true }
 });
@@ -29,10 +30,10 @@ LearningNode.relationship({ ref: 'LearningNode', path: 'requiredNode', refPath: 
 
 LearningNode.schema.post('save', function(node) {
   LearningNode.model.find({ learningPath: node.learningPath })
-    .select({ __v: 0, learningPath: 0, sortOrder: 0 })
+    .select({ __v: 0, learningPath: 0 })
     .populate('company', { __v: 0 })
     .lean()
-    .sort('no')
+    .sort('sortOrder')
     .exec()
     .then(function(nodes) {
       var LearningPathModel = keystone.list('LearningPath').model;

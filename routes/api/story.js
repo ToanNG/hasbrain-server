@@ -334,7 +334,7 @@ exports.start = function(req, res, next) {
                 if(!bStory) {
                   pubnub.publish({ 
                     channel: 'hasbrain_test_' + req.user._id,
-                    message: { text: 'To start learning this activity, your buddy also need to join this!' }
+                    message: { text: 'In order to start this activity, you and your buddy must participate!' }
                   });
                   return next(new NotFound('Story of buddy not found'));
                 } else {
