@@ -260,15 +260,17 @@ exports.complete = function(req, res, next) {
     .exec(function(err, story) {
       if (err) return next(err);
       if (!story) return next(new NotFound('Story not found'));
-      
-      story.getUpdateHandler(req).process({ isCompleted: true }, function(err) {
-        if (err) return next(err);
-        
+
+      story.isCompleted = true;
+      story.startTime = new Date();
+      story.endTime = new Date();
+      story.save(function(err){
+        if(err) return next(err);
         pubnub.publish({ 
           channel: 'hasbrain_test_' + story.enrollment.student,
           message: { text: 'You finished this activity.' }
         });
-        return res.status(200).apiResponse(story);
+        return res.status(200).send();
       });
     });
   });
