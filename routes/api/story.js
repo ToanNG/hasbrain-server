@@ -243,14 +243,33 @@ exports.create = function(req, res, next) {
 }
 
 exports.complete = function(req, res, next) {
-  Story.model.findById(req.params.id).exec(function(err, item) {
-    if (err) return next(err);
-    if (!item) return next(new NotFound('Story not found'));
-    
-    item.getUpdateHandler(req).process({ isCompleted: true }, function(err) {
+  Enrollment.model.findOne({
+    student: req.user._id,
+    isActive: true
+  })
+  .exec()
+  .then(function(enrollment){
+    if(!enrollment){
+      return next(new NotFound('Enrollment not found'));
+    }
+    Story.model.findOne({
+      enrollment: enrollment._id,
+      activity: req.params.id
+    })
+    .populate('enrollment', 'student')
+    .exec(function(err, story) {
       if (err) return next(err);
+      if (!story) return next(new NotFound('Story not found'));
       
-      return res.status(200).apiResponse(item);
+      story.getUpdateHandler(req).process({ isCompleted: true }, function(err) {
+        if (err) return next(err);
+        
+        pubnub.publish({ 
+          channel: 'hasbrain_test_' + story.enrollment.student,
+          message: { text: 'You finished this activity.' }
+        });
+        return res.status(200).apiResponse(story);
+      });
     });
   });
 }
