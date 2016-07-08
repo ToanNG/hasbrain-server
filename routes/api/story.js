@@ -256,7 +256,6 @@ exports.complete = function(req, res, next) {
       enrollment: enrollment._id,
       activity: req.params.id
     })
-    .populate('enrollment', 'student')
     .exec(function(err, story) {
       if (err) return next(err);
       if (!story) return next(new NotFound('Story not found'));
@@ -266,11 +265,9 @@ exports.complete = function(req, res, next) {
       story.endTime = new Date();
       story.save(function(err){
         if(err) return next(err);
-        pubnub.publish({ 
-          channel: 'hasbrain_test_' + story.enrollment.student,
-          message: { text: 'You finished this activity.' }
+        story.populate('activity', function(err, story) {
+          return res.status(200).apiResponse(story); 
         });
-        return res.status(200).send();
       });
     });
   });
