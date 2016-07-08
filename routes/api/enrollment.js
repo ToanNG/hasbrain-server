@@ -76,7 +76,7 @@ exports.create = function(req, res, next) {
           learningPath: enrollment.learningPath,
           nodeType: 'activity'
         })
-        .sort('no')
+        .sort('sortOrder')
         .exec()
         .then(function(node){
           if(!node) return next(new NotFound('Learning node not found'));
@@ -95,7 +95,7 @@ exports.create = function(req, res, next) {
           nodeType: 'activity',
           parent: item.activity._id
         })
-        .sort('no')
+        .sort('sortOrder')
         .exec()
         .then(function(node){
           if(!node) return next(new NotFound('Learning node not found'));
@@ -105,23 +105,12 @@ exports.create = function(req, res, next) {
   })
   .then(function(item){
     if(!item) return next(new NotFound('Item not found'));
-    return Story.model.create({
+    Story.model.create({
       enrollment: item.enrollment._id,
       activity: item.activity._id,
-    })
-    .populate('activity', function(err, story) {
-      story.activity
-        .populate('company', { __v: 0 })
-        .populate('learningPath', { __v: 0, nodeTree: 0, diagram: 0 })
-        .populate('parent', { __v: 0, learningPath: 0 }, function(err, activity) {
-          var result = _.assign({}, activity.toObject({ versionKey: false }), {
-            isCompleted: story.isCompleted,
-            startTime: story.startTime,
-            storyId: story._id
-          })
-          
-          return res.status(200).apiResponse(result);
-        });
+    }, function(err){
+      if(err) return next(new NotFound('Error when create a story'));
+      return res.status(200).apiResponse({status: 'success'});
     });
   })
   .then(null, function(err){
