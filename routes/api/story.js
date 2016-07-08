@@ -266,6 +266,10 @@ exports.complete = function(req, res, next) {
       story.save(function(err){
         if(err) return next(err);
         story.populate('activity', function(err, story) {
+          pubnub.publish({ 
+            channel: 'hasbrain_test_' + req.user._id,
+            message: { text: 'You finished this activity.' }
+          });
           return res.status(200).apiResponse(story); 
         });
       });
