@@ -90,7 +90,7 @@ exports.todayStory = function(req, res, next) {
                       learningPath: enrollment.learningPath,
                       _id: latestStory.activity._id
                     })
-                    .select({ __v: 0, tester: 0 })
+                    .select({ __v: 0 })
                     .populate('company', { __v: 0 })
                     .populate('learningPath', { __v: 0, nodeTree: 0, diagram: 0 })
                     .populate('parent', { __v: 0, learningPath: 0 })
