@@ -61,6 +61,7 @@ exports = module.exports = function(app) {
   app.get('/api/story/complete', routes.api.story.completeStory);
   app.post('/api/story/giveup', routes.api.story.giveUp);
   app.post('/api/story/start', routes.api.story.start);
+  app.post('/api/story/show-knowledge', routes.api.story.showKnowledge);
 
   app.get('/api/enrollment/:id/activity/list', routes.api.enrollment.listActivity);
   app.get('/api/enrollment/:id/story/list', routes.api.enrollment.listStory);

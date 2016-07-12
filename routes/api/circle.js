@@ -57,17 +57,23 @@ exports.completeStory = function(req, res, next) {
       if (payload.failed) {
         pubnub.publish({ 
           channel: 'hasbrain_test_' + story.enrollment.student,
-          message: { text: 'Test fails! Please try again.' }
+          message: { text: 'Test fails! Please try again.', type: 'test_result', status: 0 }
         });
         return res.status(200).send();
       }
       
-      story.getUpdateHandler(req).process({ isCompleted: true }, function(err) {
+      // story.endTime = new Date();
+      // story.save(function(err) {
+      //   if (err) return next(err);
+      //   return res.status(200);
+      // });
+
+      story.getUpdateHandler(req).process({ solvedProblem: true }, function(err) {
         if (err) return next(err);
         
         pubnub.publish({ 
           channel: 'hasbrain_test_' + story.enrollment.student,
-          message: { text: 'Congrat! You passed the test.' }
+          message: { text: 'Congrat! You passed the test.', type: 'test_result', status: 1 }
         });
         return res.status(200).send();
       });

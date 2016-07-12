@@ -34,7 +34,8 @@ exports.todayStory = function(req, res, next) {
           $or : [
             {
               enrollment: enrollment._id,
-              isCompleted : true
+              solvedProblem : true,
+              isCompleted : false
             },
             {
               enrollment: enrollment._id,
@@ -48,7 +49,7 @@ exports.todayStory = function(req, res, next) {
         .then(function(latestStory) {
           if (!latestStory) return next(new NotFound('Story not found'));
           
-          if(latestStory.isCompleted) {
+          if(latestStory.solvedProblem) {
             return Pairing.model.findOne({
               $and : [
                 {learningPath : enrollment.learningPath},
@@ -60,54 +61,75 @@ exports.todayStory = function(req, res, next) {
             .populate('studentB', '_id name')
             .exec()
             .then(function(partner){
-              if(!partner) return next(new NotFound('Buddy not found'));
-
-              const buddy = (req.user._id.equals(partner.studentA._id)) ? partner.studentB : partner.studentA;
-              
-              return Enrollment.model.findOne({
-                student: buddy._id,
-                isActive: true
-              })
-              .exec()
-              .then(function(bEnrollment) {
-                if (!bEnrollment) return next(new NotFound('Enrollment of buddy not found'));
-                return {
-                  bEnrollment : bEnrollment,
-                  activity : latestStory.activity._id
-                };
-              })
-              .then(function(data){
-                return Story.model.findOne({
-                  enrollment : data.bEnrollment._id,
-                  activity : data.activity,
-                  isCompleted : true
+              if(!partner) {
+                return LearningNode.model.findOne({
+                  learningPath: enrollment.learningPath,
+                  _id: latestStory.activity._id
                 })
-                .sort('-createdAt')
+                .select({ __v: 0 })
+                .populate('company', { __v: 0 })
+                .populate('learningPath', { __v: 0, nodeTree: 0, diagram: 0 })
+                .populate('parent', { __v: 0, learningPath: 0 })
                 .exec()
-                .then(function(bStory){
-                  if(!bStory) {
-                    return LearningNode.model.findOne({
-                      learningPath: enrollment.learningPath,
-                      _id: latestStory.activity._id
-                    })
-                    .select({ __v: 0 })
-                    .populate('company', { __v: 0 })
-                    .populate('learningPath', { __v: 0, nodeTree: 0, diagram: 0 })
-                    .populate('parent', { __v: 0, learningPath: 0 })
-                    .exec()
-                    .then(function(activity) {
-                      return res.status(200).apiResponse(_.assign({}, activity.toObject(), {
-                        isCompleted: latestStory.isCompleted,
-                        startTime: latestStory.startTime,
-                        storyId: latestStory._id,
-                        buddyCompleted : false
-                      }));
-                    });
-                  } else {
-                    return res.status(404);
-                  }
+                .then(function(activity) {
+                  return res.status(200).apiResponse(_.assign({}, activity.toObject(), {
+                    isCompleted: latestStory.isCompleted,
+                    startTime: latestStory.startTime,
+                    storyId: latestStory._id,
+                    buddyCompleted : true,
+                    showKnowledge : latestStory.showKnowledge,
+                    solvedProblem: latestStory.solvedProblem
+                  }));
                 });
-              });
+              } else {
+                const buddy = (req.user._id.equals(partner.studentA._id)) ? partner.studentB : partner.studentA;
+                return Enrollment.model.findOne({
+                  student: buddy._id,
+                  isActive: true
+                })
+                .exec()
+                .then(function(bEnrollment) {
+                  if (!bEnrollment) return next(new NotFound('Enrollment of buddy not found'));
+                  return {
+                    bEnrollment : bEnrollment,
+                    activity : latestStory.activity._id
+                  };
+                })
+                .then(function(data){
+                  return Story.model.findOne({
+                    enrollment : data.bEnrollment._id,
+                    activity : data.activity,
+                    solvedProblem : true
+                  })
+                  .sort('-createdAt')
+                  .exec()
+                  .then(function(bStory){
+                    if(!bStory) {
+                      return LearningNode.model.findOne({
+                        learningPath: enrollment.learningPath,
+                        _id: latestStory.activity._id
+                      })
+                      .select({ __v: 0 })
+                      .populate('company', { __v: 0 })
+                      .populate('learningPath', { __v: 0, nodeTree: 0, diagram: 0 })
+                      .populate('parent', { __v: 0, learningPath: 0 })
+                      .exec()
+                      .then(function(activity) {
+                        return res.status(200).apiResponse(_.assign({}, activity.toObject(), {
+                          isCompleted: latestStory.isCompleted,
+                          startTime: latestStory.startTime,
+                          storyId: latestStory._id,
+                          buddyCompleted : false,
+                          showKnowledge : latestStory.showKnowledge,
+                          solvedProblem : latestStory.solvedProblem
+                        }));
+                      });
+                    } else {
+                      return res.status(404);
+                    }
+                  });
+                });
+              }
             });
           } else {
             return LearningNode.model.findOne({
@@ -124,7 +146,9 @@ exports.todayStory = function(req, res, next) {
                 isCompleted: latestStory.isCompleted,
                 startTime: latestStory.startTime,
                 storyId: latestStory._id,
-                buddyCompleted : true
+                buddyCompleted : true,
+                showKnowledge : latestStory.showKnowledge,
+                solvedProblem: latestStory.solvedProblem
               }));
             });
           }
@@ -214,7 +238,8 @@ exports.create = function(req, res, next) {
               if(!activity) return next(new NotFound('Acitivity was not found or not valid!'));
               return Story.model.create({
                 enrollment: enrollment._id,
-                activity: activity._id
+                activity: activity._id,
+                startTime: new Date()
               });
             });
           })
@@ -225,9 +250,11 @@ exports.create = function(req, res, next) {
                 .populate('learningPath', { __v: 0, nodeTree: 0, diagram: 0 })
                 .populate('parent', { __v: 0, learningPath: 0 }, function(err, activity) {
                   var result = _.assign({}, activity.toObject({ versionKey: false }), {
-                    isCompleted: story.isCompleted,
                     startTime: story.startTime,
-                    storyId: story._id
+                    storyId: story._id,
+                    isCompleted: story.isCompleted,
+                    solvedProblem: story.solvedProblem,
+                    showKnowledge : story.showKnowledge
                   })
                   
                   return res.status(200).apiResponse(result);
@@ -256,22 +283,85 @@ exports.complete = function(req, res, next) {
       enrollment: enrollment._id,
       activity: req.params.id
     })
-    .exec(function(err, story) {
-      if (err) return next(err);
+    .sort('-createdAt')
+    .populate('activity', '_id no')
+    .exec()
+    .then(function(story) {
       if (!story) return next(new NotFound('Story not found'));
 
-      story.isCompleted = true;
-      story.startTime = new Date();
-      story.endTime = new Date();
-      story.save(function(err){
-        if(err) return next(err);
-        story.populate('activity', function(err, story) {
-          pubnub.publish({ 
-            channel: 'hasbrain_test_' + req.user._id,
-            message: { text: 'You finished this activity.' }
+      return Pairing.model.findOne({
+        $and : [
+          {learningPath : enrollment.learningPath},
+          {$or:[ {studentA: req.user._id}, {studentB: req.user._id} ]}
+        ]
+      })
+      .sort('-createdAt')
+      .populate('studentA', '_id name')
+      .populate('studentB', '_id name')
+      .exec()
+      .then(function(partner){
+        if(!partner){
+          story.isCompleted = true;
+          // story.startTime = new Date();
+          story.endTime = new Date();
+          story.save(function(err){
+            if(err) return next(err);
+            story.populate('activity', function(err, story) {
+              pubnub.publish({ 
+                channel: 'hasbrain_test_' + req.user._id,
+                message: { text: 'Congratulations! You just finished this activity.' }
+              });
+              return res.status(200).apiResponse(story); 
+            });
           });
-          return res.status(200).apiResponse(story); 
-        });
+        } else {
+          const buddy = (req.user._id.equals(partner.studentA._id)) ? partner.studentB : partner.studentA;
+          
+          return Enrollment.model.findOne({
+            student: buddy._id,
+            isActive: true
+          })
+          .exec()
+          .then(function(bEnrollment) {
+            if (!bEnrollment) return next(new NotFound('Enrollment of buddy not found'));
+            return {
+              bEnrollment : bEnrollment,
+              activity : story.activity._id
+            };
+          })
+          .then(function(data){
+            return Story.model.findOne({
+              enrollment : data.bEnrollment._id,
+              activity : data.activity,
+              isCompleted : true
+            })
+            .sort('-createdAt')
+            .exec()
+            .then(function(bStory){
+              if(!bStory) {
+                pubnub.publish({ 
+                  channel: 'hasbrain_test_' + req.user._id,
+                  message: { text: 'Your buddy must complete this activity first!' }
+                });
+                return res.status(200).send();
+              } else {
+                story.isCompleted = true;
+                // story.startTime = new Date();
+                // story.endTime = new Date();
+                story.save(function(err){
+                  if(err) return next(err);
+                  story.populate('activity', function(err, story) {
+                    pubnub.publish({ 
+                      channel: 'hasbrain_test_' + req.user._id,
+                      message: { text: 'Congratulations! You just finished this activity.' }
+                    });
+                    return res.status(200).apiResponse(story); 
+                  });
+                });
+              }
+            });
+          });
+        }
       });
     });
   });
@@ -371,7 +461,8 @@ exports.start = function(req, res, next) {
                           var result = _.assign({}, activity.toObject({ versionKey: false }), {
                             isCompleted: story.isCompleted,
                             startTime: story.startTime,
-                            storyId: story._id
+                            storyId: story._id,
+                            showKnowledge : story.showKnowledge,
                           });
                           
                           return res.status(200).apiResponse(result);
@@ -393,7 +484,8 @@ exports.start = function(req, res, next) {
                     var result = _.assign({}, activity.toObject({ versionKey: false }), {
                       isCompleted: story.isCompleted,
                       startTime: story.startTime,
-                      storyId: story._id
+                      storyId: story._id,
+                      showKnowledge : story.showKnowledge
                     });
                     
                     return res.status(200).apiResponse(result);
@@ -401,6 +493,56 @@ exports.start = function(req, res, next) {
               });
             });
           }
+        });
+      });
+    })
+    .then(null, function(err) {
+      return next(err);
+    });
+}
+
+exports.showKnowledge = function(req, res, next) {
+  Enrollment.model.findOne({
+      student: req.user._id,
+      isActive: true
+    })
+    .exec()
+    .then(function(enrollment) {
+      if (!enrollment)
+        return next(new NotFound('Enrollment not found'));
+      
+      return Story.model.findOne({
+        enrollment: enrollment._id,
+        activity: req.body.activity,
+        showKnowledge : false
+        })
+        .sort({createdAt : -1})
+        .exec()
+        .then(function(story) {
+          if (!story) return next(new NotFound('Story not found'));
+          return story;
+        });
+    })
+    .then(function(item) {
+      item.showKnowledge = true;
+      item.save(function(err) {
+        if (err) return next(err);
+
+        item.populate('activity', function(err, story) {
+          story.activity
+            .populate('company', { __v: 0 })
+            .populate('learningPath', { __v: 0, nodeTree: 0, diagram: 0 })
+            .populate('parent', { __v: 0, learningPath: 0 }, function(err, activity) {
+              var result = _.assign({}, activity.toObject({ versionKey: false }), {
+                startTime: story.startTime,
+                storyId: story._id,
+                isCompleted: story.isCompleted,
+                showKnowledge : story.showKnowledge,
+                solvedProblem: story.solvedProblem
+              });
+              
+              return res.status(200).apiResponse(result);
+            });
         });
       });
     })

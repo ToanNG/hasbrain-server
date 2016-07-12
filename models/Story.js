@@ -16,13 +16,15 @@ Story.add({
   endTime: { type: Types.Datetime },
   attempts: { type: Number, default: 0 }
 }, 'Status', {
-  isCompleted: { type: Types.Boolean }
+  isCompleted: { type: Types.Boolean, default: false },
+  solvedProblem: { type: Types.Boolean, default: false },
+  showKnowledge: { type: Types.Boolean, default: false },
 });
 
 //Story.schema.index({ enrollment: 1, activity: 1 }, { unique: true });
 
 Story.schema.pre('save', function(next) {
-    if (this.isCompleted && !this.endTime) {
+    if (this.solvedProblem && !this.endTime) {
         this.endTime = new Date();
     }
     next();
