@@ -61,27 +61,7 @@ exports.todayStory = function(req, res, next) {
             .populate('studentB', '_id name')
             .exec()
             .then(function(partner){
-              if(!partner) {
-                return LearningNode.model.findOne({
-                  learningPath: enrollment.learningPath,
-                  _id: latestStory.activity._id
-                })
-                .select({ __v: 0 })
-                .populate('company', { __v: 0 })
-                .populate('learningPath', { __v: 0, nodeTree: 0, diagram: 0 })
-                .populate('parent', { __v: 0, learningPath: 0 })
-                .exec()
-                .then(function(activity) {
-                  return res.status(200).apiResponse(_.assign({}, activity.toObject(), {
-                    isCompleted: latestStory.isCompleted,
-                    startTime: latestStory.startTime,
-                    storyId: latestStory._id,
-                    buddyCompleted : true,
-                    showKnowledge : latestStory.showKnowledge,
-                    solvedProblem: latestStory.solvedProblem
-                  }));
-                });
-              } else {
+              return (partner) ? (
                 const buddy = (req.user._id.equals(partner.studentA._id)) ? partner.studentB : partner.studentA;
                 return Enrollment.model.findOne({
                   student: buddy._id,
@@ -129,7 +109,27 @@ exports.todayStory = function(req, res, next) {
                     }
                   });
                 });
-              }
+              ) : (
+                return LearningNode.model.findOne({
+                  learningPath: enrollment.learningPath,
+                  _id: latestStory.activity._id
+                })
+                .select({ __v: 0 })
+                .populate('company', { __v: 0 })
+                .populate('learningPath', { __v: 0, nodeTree: 0, diagram: 0 })
+                .populate('parent', { __v: 0, learningPath: 0 })
+                .exec()
+                .then(function(activity) {
+                  return res.status(200).apiResponse(_.assign({}, activity.toObject(), {
+                    isCompleted: latestStory.isCompleted,
+                    startTime: latestStory.startTime,
+                    storyId: latestStory._id,
+                    buddyCompleted : true,
+                    showKnowledge : latestStory.showKnowledge,
+                    solvedProblem: latestStory.solvedProblem
+                  }));
+                });
+              );
             });
           } else {
             return LearningNode.model.findOne({
