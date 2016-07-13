@@ -300,6 +300,7 @@ exports.complete = function(req, res, next) {
       .populate('studentB', '_id name')
       .exec()
       .then(function(partner){
+        console.log(partner);
         if(!partner){
           story.isCompleted = true;
           // story.startTime = new Date();
