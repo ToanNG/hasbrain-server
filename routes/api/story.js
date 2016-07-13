@@ -186,7 +186,7 @@ exports.giveUp = function(req, res, next) {
       story.endTime = new Date();
       story.save(function(err) {
         if (err) return next(err);
-        return res.status(200);
+        return res.status(200).send();
       });
     })
     .then(null, function(err) {
@@ -298,7 +298,6 @@ exports.complete = function(req, res, next) {
       .populate('studentB', '_id name')
       .exec()
       .then(function(partner){
-        console.log(partner);
         if(!partner){
           story.isCompleted = true;
           // story.startTime = new Date();
