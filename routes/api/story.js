@@ -104,8 +104,9 @@ exports.todayStory = function(req, res, next) {
                   .sort('-createdAt')
                   .exec()
                   .then(function(bStory){
-                    if(!bStory) {
-                      return LearningNode.model.findOne({
+                    var buddyCompleted = bStory ? true : false;
+
+                    return LearningNode.model.findOne({
                         learningPath: enrollment.learningPath,
                         _id: latestStory.activity._id
                       })
@@ -119,14 +120,11 @@ exports.todayStory = function(req, res, next) {
                           isCompleted: latestStory.isCompleted,
                           startTime: latestStory.startTime,
                           storyId: latestStory._id,
-                          buddyCompleted : false,
+                          buddyCompleted : buddyCompleted,
                           showKnowledge : latestStory.showKnowledge,
                           solvedProblem : latestStory.solvedProblem
                         }));
                       });
-                    } else {
-                      return res.status(404);
-                    }
                   });
                 });
               }
@@ -288,7 +286,7 @@ exports.complete = function(req, res, next) {
     .exec()
     .then(function(story) {
       if (!story) return next(new NotFound('Story not found'));
-      
+
       return Pairing.model.findOne({
         $and : [
           {learningPath : enrollment.learningPath},
