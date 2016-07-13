@@ -332,7 +332,7 @@ exports.complete = function(req, res, next) {
             return Story.model.findOne({
               enrollment : data.bEnrollment._id,
               activity : data.activity,
-              isCompleted : true
+              solvedProblem : true
             })
             .sort('-createdAt')
             .exec()
