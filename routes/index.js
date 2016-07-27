@@ -54,6 +54,7 @@ exports = module.exports = function(app) {
 
   app.get('/api/user/list', routes.api.user.list);
   app.get('/api/user/me', routes.api.user.me);
+  app.post('/api/user/leveltips', routes.api.user.levelTips);
 
   app.get('/api/story/today', routes.api.story.todayStory);
   app.post('/api/story/create', routes.api.story.create);

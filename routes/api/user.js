@@ -53,3 +53,13 @@ exports.me = function(req, res, next) {
       return next(err);
     });
 }
+
+exports.levelTips = function(req, res, next) {
+  UserModel.findOne({ _id: req.user._id }, function (err, user){
+    user.levelTips = req.body.levelTips
+    user.save(function(err){
+      if(err) return next(err);
+      return res.status(200).apiResponse(user);
+    });
+  });
+}

@@ -12,7 +12,8 @@ User.add({
 	name: { type: Types.Name, index: true },
 	email: { type: Types.Email, initial: true, required: true, index: true },
 	password: { type: Types.Password },
-	avatar: { type: String }
+	avatar: { type: String },
+  levelTips: { type: Number, default: 0 }
 }, 'Permissions', {
 	isAdmin: { type: Boolean, label: 'Admin', index: true },
 	isSuperAdmin: { type: Boolean, label: 'Super admin', index: true }
