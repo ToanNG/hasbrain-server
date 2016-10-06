@@ -6,7 +6,7 @@ var LearningPathModel = keystone.list('LearningPath').model;
 var EnrollmentModel = keystone.list('Enrollment').model;
 
 exports.list = function(req, res, next) {
-  LearningPathModel.find()
+  LearningPathModel.find({ active: true })
     .exec()
     .then(function(items) {
       return res.status(200).apiResponse({

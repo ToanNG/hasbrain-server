@@ -82,7 +82,7 @@ exports = module.exports = function(app) {
   app.get('/api/learning-node/today/:learningNode', routes.api.learningNode.getTodayLearningNode);
 
   app.get('/api/pairing/me', routes.api.pairing.getPartner);
-  app.get('/api/quiz/:id', routes.api.quiz.get);
+  // app.get('/api/quiz/:id', routes.api.quiz.get);
 
   // Error Handler
   app.use(function(err, req, res, next) {

@@ -11,7 +11,8 @@ LearningPath.add({
   name: { type: String, required: true, index: true },
   description: { type: Types.Textarea, height: 150 },
   diagram: { type: String, index: true },
-  nodeTree: { type: Types.Textarea, hidden: true }
+  nodeTree: { type: Types.Textarea, hidden: true },
+  active: { type: Boolean, default: false }
 }, 'Controls', {
   refreshCoggleDiagram: { type: Boolean }
 });
