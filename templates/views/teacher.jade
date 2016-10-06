@@ -1,6 +1,34 @@
-extends ../layouts/admin
+doctype html
+html
 
-block content
-  .container
-    .page-header
-      h1 Welcome teacher
+  head
+    meta(charset="utf-8")
+    meta(name="viewport", content="initial-scale=1.0,user-scalable=no,maximum-scale=1,width=device-width")
+    meta(http-equiv="X-UA-Compatible" content="IE=edge")
+
+    title= title || 'hasBrain'
+    link(rel="stylesheet",type="text/css",href="https://fonts.googleapis.com/css?family=Roboto:400,300,500")
+    link(rel="stylesheet",type="text/css",href="https://fonts.googleapis.com/icon?family=Material+Icons")
+    link(rel="stylesheet",type="text/css",href="http://admin-sdk.userkit.mstage.io/app.css")
+    link(rel="shortcut icon", href="/favicon.ico", type="image/x-icon")
+
+  body
+    #admin-root
+      script(type="text/javascript",src="http://admin-sdk.userkit.mstage.io/app.bundle.js")
+      script.
+        window._USERKIT_.render({
+          dest: 'admin-root',
+          projectToken: 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJwcm9qZWN0X2lkIjoiNTdjZjhmMzk4ZWQ4YjBlYTY4OWJhMGRhIiwiaWF0IjoxNDczMjIwNDU5fQ.qQ_RpZirPWVwpp1wt4qBao58YjNWHzyuO4VYd_HywTA',
+          returnUrl: 'http://google.com',
+
+          firebaseApiKey: 'AIzaSyDl-sRbDmhA7seCzCMAn7A5hLgE8nzhFvo',
+          firebaseAuthDomain: 'hasbrain-7e6da.firebaseapp.com',
+          firebaseDatabaseURL: 'https://hasbrain-7e6da.firebaseio.com',
+          firebaseStorageBucket: 'hasbrain-7e6da.appspot.com',
+
+          deeplinkFormat: 'brain://chat/:profile_id',
+
+          headerTitle: 'hasBrain',
+          headerColor: '',
+          layout: 'fixed'
+        })
