@@ -79,3 +79,21 @@ exports.completeStory = function(req, res, next) {
       });
     });
 }
+
+
+exports.setCompleteStory = function(req, res, next) {
+  var story_id = req.params.id;
+
+  Story.model.findById(story_id)
+    .populate('enrollment', 'student')
+    .exec(function(err, story) {
+      if (err) return next(err);
+      if (!story) return next(new NotFound('Story not found'));
+
+      story.getUpdateHandler(req).process({ solvedProblem: true }, function(err) {
+        if (err) return next(err);
+        
+        return res.status(200).send();
+      });
+    });
+}

@@ -63,6 +63,7 @@ exports = module.exports = function(app) {
   app.post('/api/story/giveup', routes.api.story.giveUp);
   app.post('/api/story/start', routes.api.story.start);
   app.post('/api/story/show-knowledge', routes.api.story.showKnowledge);
+  app.get('/api/story/set-complete/:id', routes.api.circle.setCompleteStory);
 
   app.get('/api/enrollment/:id/activity/list', routes.api.enrollment.listActivity);
   app.get('/api/enrollment/:id/story/list', routes.api.enrollment.listStory);
@@ -81,6 +82,7 @@ exports = module.exports = function(app) {
   app.get('/api/learning-node/today/:learningNode', routes.api.learningNode.getTodayLearningNode);
 
   app.get('/api/pairing/me', routes.api.pairing.getPartner);
+  app.get('/api/quiz/:id', routes.api.quiz.get);
 
   // Error Handler
   app.use(function(err, req, res, next) {

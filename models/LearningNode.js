@@ -22,11 +22,13 @@ LearningNode.add({
   no: { type: Types.Number, dependsOn: { nodeType: 'activity' } },
   activityId : { type: String, dependsOn: { nodeType: 'activity' } },
   tester: { type: String, dependsOn: { nodeType: 'activity' } },
-  dependency: { type: Types.Relationship, ref: 'LearningNode', many: true }
+  dependency: { type: Types.Relationship, ref: 'LearningNode', many: true },
+  quiz: { type: Types.Relationship, ref: 'Quiz', many: true }
 });
 
 LearningNode.relationship({ ref: 'LearningNode', path: 'children', refPath: 'parent' });
 LearningNode.relationship({ ref: 'LearningNode', path: 'requiredNode', refPath: 'dependency' });
+LearningNode.relationship({ ref: 'Quiz', path: 'quiz', refPath: 'quiz' });
 
 LearningNode.schema.post('save', function(node) {
   LearningNode.model.find({ learningPath: node.learningPath })
