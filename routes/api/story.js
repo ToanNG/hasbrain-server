@@ -122,7 +122,8 @@ exports.todayStory = function(req, res, next) {
                           storyId: latestStory._id,
                           buddyCompleted : buddyCompleted,
                           showKnowledge : latestStory.showKnowledge,
-                          solvedProblem : latestStory.solvedProblem
+                          solvedProblem : latestStory.solvedProblem,
+                          workingTime : latestStory.workingTime
                         }));
                       });
                   });
@@ -146,7 +147,8 @@ exports.todayStory = function(req, res, next) {
                 storyId: latestStory._id,
                 buddyCompleted : true,
                 showKnowledge : latestStory.showKnowledge,
-                solvedProblem: latestStory.solvedProblem
+                solvedProblem: latestStory.solvedProblem,
+                workingTime : latestStory.workingTime
               }));
             });
           }
@@ -547,4 +549,36 @@ exports.showKnowledge = function(req, res, next) {
     .then(null, function(err) {
       return next(err);
     });
+}
+
+exports.addWorkingTime = function(req, res, next){
+  Enrollment.model.findOne({
+    student: req.user._id,
+    isActive: true
+  })
+  .exec()
+  .then(function(enrollment){
+    if(!enrollment){
+      return next(new NotFound('Enrollment not found'));
+    }
+
+    return Story.model.findOne({
+      enrollment: enrollment._id,
+      _id: req.params.id
+    })
+    .sort('-createdAt')
+    .exec()
+    .then(function(story){
+      if(!story) return next(new NotFound('Story not found'));
+
+      story.workingTime += req.body.time;
+      story.save(function(err){
+        if(err) return next(err);
+        return res.status(200).apiResponse({});
+      });
+    });
+  })
+  .then(null, function(err){
+    return next(err);
+  });
 }

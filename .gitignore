@@ -29,3 +29,8 @@ node_modules
 
 # Ignore .DS_Store files on OS X
 .DS_Store
+
+# Elastic Beanstalk Files
+.elasticbeanstalk/*
+!.elasticbeanstalk/*.cfg.yml
+!.elasticbeanstalk/*.global.yml

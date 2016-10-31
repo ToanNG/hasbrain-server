@@ -16,48 +16,52 @@ var server = oauth2orize.createServer();
 //Resource owner password
 server.exchange(oauth2orize.exchange.password(function (client, username, password, scope, done) {
 	if (username === 'user.github@hasbrain.com') {
-		return request
+		return Promise.all([
+			request
+			.get('https://api.github.com/user?access_token=' + password),
+			request
 			.get('https://api.github.com/user/emails?access_token=' + password)
-			.end(function(err, res) {
-				var primaryEmail = _.find(res.body, 'primary').email,
-						token = utils.uid(256),
-						refreshToken = utils.uid(256),
-						tokenHash = crypto.createHash('sha1').update(token).digest('hex'),
-						refreshTokenHash = crypto.createHash('sha1').update(refreshToken).digest('hex'),
-						expirationDate = new Date(new Date().getTime() + (3600 * 1000));
+		]).then(function(values) {
+			var primaryEmail = _.find(values[1].body, 'primary').email,
+					username = values[0].body.login,
+					token = utils.uid(256),
+					refreshToken = utils.uid(256),
+					tokenHash = crypto.createHash('sha1').update(token).digest('hex'),
+					refreshTokenHash = crypto.createHash('sha1').update(refreshToken).digest('hex'),
+					expirationDate = new Date(new Date().getTime() + (3600 * 1000));
 
-				User.model.findOne({email: primaryEmail})
-					.exec()
-					.then(function(user) {
-						if (!user) {
-							return User.model.create({email: primaryEmail});
-						} else {
-							return user;
-						}
-					})
-					.then(function() {
-						return AccessToken.model.create({
-							token: tokenHash,
-							expirationDate: expirationDate,
-							clientId: client.clientId,
-							userId: primaryEmail,
-							scope: scope
-						});
-					})
-					.then(function() {
-						return RefreshToken.model.create({
-							refreshToken: refreshTokenHash,
-							clientId: client.clientId,
-							userId: primaryEmail
-						});
-					})
-					.then(function() {
-						done(null, token, refreshToken, {expires_in: expirationDate});
-					})
-					.then(null, function(err) {
-						return done(err);
+			return User.model.findOne({email: primaryEmail})
+				.exec()
+				.then(function(user) {
+					if (!user) {
+						return User.model.create({email: primaryEmail, username: username});
+					} else {
+						return user;
+					}
+				})
+				.then(function() {
+					return AccessToken.model.create({
+						token: tokenHash,
+						expirationDate: expirationDate,
+						clientId: client.clientId,
+						userId: primaryEmail,
+						scope: scope
 					});
-			});
+				})
+				.then(function() {
+					return RefreshToken.model.create({
+						refreshToken: refreshTokenHash,
+						clientId: client.clientId,
+						userId: primaryEmail
+					});
+				})
+				.then(function() {
+					done(null, token, refreshToken, {expires_in: expirationDate});
+				})
+				.then(null, function(err) {
+					return done(err);
+				});
+		});
 	}
 
 	User.model.findOne({email: username}, function (err, user) {

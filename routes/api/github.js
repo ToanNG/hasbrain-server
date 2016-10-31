@@ -9,8 +9,8 @@ exports.callback = function(req, res, next) {
   request
     .post('https://github.com/login/oauth/access_token')
     .send({
-      client_id: '472d3f7775e7e51c6660',
-      client_secret: 'f01542b6f5b37d4bbbf50c53693521c921b67b47',
+      client_id: '49ec56687000a737f1d5',
+      client_secret: '732100d94931d9af182ec5f3c82c8865919d4430',
       code: q.code
     })
     .set('Accept', 'application/json')

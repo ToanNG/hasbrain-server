@@ -19,6 +19,7 @@ Story.add({
   isCompleted: { type: Types.Boolean, default: false },
   solvedProblem: { type: Types.Boolean, default: false },
   showKnowledge: { type: Types.Boolean, default: false },
+  workingTime: { type: Number, default: 0 }
 });
 
 //Story.schema.index({ enrollment: 1, activity: 1 }, { unique: true });

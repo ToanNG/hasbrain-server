@@ -65,6 +65,8 @@ exports = module.exports = function(app) {
   app.post('/api/story/show-knowledge', routes.api.story.showKnowledge);
   app.get('/api/story/set-complete/:id', routes.api.circle.setCompleteStory);
 
+  app.post('/api/story/add-working-time/:id', routes.api.story.addWorkingTime);
+
   app.get('/api/enrollment/:id/activity/list', routes.api.enrollment.listActivity);
   app.get('/api/enrollment/:id/story/list', routes.api.enrollment.listStory);
   app.post('/api/enrollment/create', routes.api.enrollment.create);
