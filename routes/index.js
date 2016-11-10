@@ -39,6 +39,9 @@ var routes = {
 // Setup Route Bindings
 exports = module.exports = function(app) {
   
+  // Cors
+  app.use(cors());
+
   // Views
   app.get('/', routes.views.index);
   app.all('/contact', routes.views.contact);
@@ -76,7 +79,7 @@ exports = module.exports = function(app) {
 
   app.post('/api/circle/build', routes.api.circle.build);
 
-  app.get('/api/learning-path/list', cors(), routes.api.learningPath.list);
+  app.get('/api/learning-path/list', routes.api.learningPath.list);
   app.get('/api/learning-path/me', routes.api.learningPath.me);
   //app.get('/api/learning-path/:id', routes.api.learningPath.get);
 
