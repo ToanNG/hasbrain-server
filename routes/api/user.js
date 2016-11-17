@@ -69,7 +69,10 @@ exports.setChaining = function(req, res, next) {
     if(req.body.type == 'reset') {
       user.chaining = 0;
     } else if(req.body.type == 'increase') {
-      var cur_chaining = parseInt(user.chaining);
+      var cur_chaining = 0;
+      if(user.chaining && !isNaN(user.chaining)) {
+        cur_chaining = parseInt(user.chaining);
+      }
       cur_chaining += 1;
       user.chaining = cur_chaining;
     }
@@ -84,7 +87,10 @@ exports.setChaining = function(req, res, next) {
 
 exports.addPoints = function(req, res, next) {
   UserModel.findOne({ _id: req.user._id }, function (err, user){
-    var cur_point = parseInt(user.points);
+    var cur_point = 0;
+    if(user.points && !isNaN(user.points)){
+      cur_point = parseInt(user.points);
+    }
     cur_point += parseInt(req.body.point);
     user.points = cur_point;
     user.save(function(err){
