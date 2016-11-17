@@ -59,6 +59,8 @@ exports = module.exports = function(app) {
   app.get('/api/user/list', routes.api.user.list);
   app.get('/api/user/me', routes.api.user.me);
   app.post('/api/user/leveltips', routes.api.user.levelTips);
+  app.post('/api/user/chaining', routes.api.user.setChaining);
+  app.post('/api/user/add-points', routes.api.user.addPoints);
 
   app.get('/api/story/today', routes.api.story.todayStory);
   app.post('/api/story/create', routes.api.story.create);
@@ -89,6 +91,8 @@ exports = module.exports = function(app) {
 
   app.get('/api/pairing/me', routes.api.pairing.getPartner);
   // app.get('/api/quiz/:id', routes.api.quiz.get);
+
+  app.get('/api/settings/get', routes.api.settings.get);
 
   // Error Handler
   app.use(function(err, req, res, next) {

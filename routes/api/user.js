@@ -56,10 +56,41 @@ exports.me = function(req, res, next) {
 
 exports.levelTips = function(req, res, next) {
   UserModel.findOne({ _id: req.user._id }, function (err, user){
-    user.levelTips = req.body.levelTips
+    user.levelTips = req.body.levelTips;
     user.save(function(err){
       if(err) return next(err);
       return res.status(200).apiResponse(user);
+    });
+  });
+}
+
+exports.setChaining = function(req, res, next) {
+  UserModel.findOne({ _id: req.user._id }, function (err, user){
+    if(req.body.type == 'reset') {
+      user.chaining = 0;
+    } else if(req.body.type == 'increase') {
+      var cur_chaining = parseInt(user.chaining);
+      cur_chaining += 1;
+      user.chaining = cur_chaining;
+    }
+    user.save(function(err){
+      if(err) return next(err);
+      var obj = _.omit(user.toObject(), ['_id', 'isAdmin', 'isSuperAdmin', 'password', '__v']);
+      return res.status(200).apiResponse(obj);
+    });
+  });
+}
+
+
+exports.addPoints = function(req, res, next) {
+  UserModel.findOne({ _id: req.user._id }, function (err, user){
+    var cur_point = parseInt(user.points);
+    cur_point += parseInt(req.body.point);
+    user.points = cur_point;
+    user.save(function(err){
+      if(err) return next(err);
+      var obj = _.omit(user.toObject(), ['_id', 'isAdmin', 'isSuperAdmin', 'password', '__v']);
+      return res.status(200).apiResponse(obj);
     });
   });
 }

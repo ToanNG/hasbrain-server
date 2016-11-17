@@ -1,6 +1,6 @@
 var async = require('async'),
     keystone = require('keystone'),
-    util = require('util')
+    util = require('util'),
     _ = require('lodash'),
     pubnub = require('pubnub')({
       publish_key: 'pub-c-8807fd6d-6f87-486f-9fd6-5869bc37e93a',

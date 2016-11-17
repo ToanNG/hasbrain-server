@@ -95,7 +95,8 @@ keystone.set('nav', {
 	'pairing': 'pairings',
 	'users': 'users',
 	'clients': 'clients',
-	'companies': 'companies'
+	'companies': 'companies',
+	'settings': 'settings'
 });
 
 // Redirect when authentication succeeds
