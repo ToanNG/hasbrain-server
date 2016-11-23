@@ -84,7 +84,6 @@ exports.setChaining = function(req, res, next) {
   });
 }
 
-
 exports.addPoints = function(req, res, next) {
   UserModel.findOne({ _id: req.user._id }, function (err, user){
     var cur_point = 0;
@@ -99,4 +98,19 @@ exports.addPoints = function(req, res, next) {
       return res.status(200).apiResponse(obj);
     });
   });
+}
+
+exports.pointsRanking = function(req, res, next) {
+  var limit = 10;
+  if( req.query.limit ) {
+    limit = req.query.limit;
+  }
+  UserModel.find({})
+    .select({ _id: 1, name: 1, email: 1, points: 1, chaining: 1})
+    .sort({ points: -1 })
+    .limit(limit)
+    .exec()
+    .then(function (user){
+      res.status(200).apiResponse(user);
+    });
 }

@@ -61,6 +61,7 @@ exports = module.exports = function(app) {
   app.post('/api/user/leveltips', routes.api.user.levelTips);
   app.post('/api/user/chaining', routes.api.user.setChaining);
   app.post('/api/user/add-points', routes.api.user.addPoints);
+  app.get('/api/user/points-rank', routes.api.user.pointsRanking);
 
   app.get('/api/story/today', routes.api.story.todayStory);
   app.post('/api/story/create', routes.api.story.create);
