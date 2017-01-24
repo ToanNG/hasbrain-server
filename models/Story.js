@@ -14,11 +14,12 @@ Story.add({
   activity: { type: Types.Relationship, ref: 'LearningNode', required: true, initial: true, filters: { 'nodeType': 'activity' } },
   startTime: { type: Types.Datetime },
   endTime: { type: Types.Datetime },
-  attempts: { type: Number, default: 0 }
+  attempts: { type: Number, default: 0 },
+  typeFormData: { type: String }
 }, 'Status', {
   isCompleted: { type: Types.Boolean, default: false },
   solvedProblem: { type: Types.Boolean, default: false },
-  showKnowledge: { type: Types.Boolean, default: false },
+  showKnowledge: { type: Types.Boolean, default: true },
   workingTime: { type: Number, default: 0 }
 });
 
