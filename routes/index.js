@@ -96,6 +96,8 @@ exports = module.exports = function(app) {
 
   app.get('/api/settings/get', routes.api.settings.get);
 
+  app.post('/hook', routes.api.typeform.hook);
+
   // Error Handler
   app.use(function(err, req, res, next) {
     if (err.statusCode === 404) {
