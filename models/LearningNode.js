@@ -20,10 +20,13 @@ LearningNode.add({
   knowledge: { type: Types.Html, wysiwyg: true, dependsOn: { nodeType: 'activity' } },
   estimation: { type: Types.Number, dependsOn: { nodeType: 'activity' } },
   no: { type: Types.Number, dependsOn: { nodeType: 'activity' } },
-  activityId : { type: String, dependsOn: { nodeType: 'activity' } },
-  tester: { type: String, dependsOn: { nodeType: 'activity' } },
+  answerType: { type: Types.Select, options: 'codeCheck, typeFormQuiz', default: 'codeCheck', required: true, initial: true, dependsOn: { nodeType: 'activity' } },
+  activityId : { type: String, dependsOn: { nodeType: 'activity', answerType: 'codeCheck' } },
+  tester: { type: String, dependsOn: { nodeType: 'activity', answerType: 'codeCheck' } },
+  typeformId : { type: String, dependsOn: { nodeType: 'activity', answerType: 'typeFormQuiz' } },
   dependency: { type: Types.Relationship, ref: 'LearningNode', many: true },
   // quiz: { type: Types.Relationship, ref: 'Quiz', many: true }
+
 });
 
 LearningNode.relationship({ ref: 'LearningNode', path: 'children', refPath: 'parent' });
