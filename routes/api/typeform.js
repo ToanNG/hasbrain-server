@@ -21,7 +21,7 @@ util.inherits(NotFound, Error);
 
 exports.hook = function(req, res, next) {
   var data = req.body;
-  if (data) {
+  if (data && data.form_response && data.form_response.hidden && data.form_response.hidden.student_id && data.form_response.hidden.story_id) {
     Enrollment.model.findOne({
       student: data.form_response.hidden.student_id
     })
