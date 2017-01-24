@@ -12,7 +12,7 @@ var Story = keystone.list('Story'),
     LearningNode = keystone.list('LearningNode'),
     Pairing = keystone.list('Pairing');
 
-function NotFound(message) {  
+function NotFound(message) {
   Error.call(this);
   this.statusCode = 404;
   this.message = message;
@@ -48,7 +48,7 @@ exports.todayStory = function(req, res, next) {
         .exec()
         .then(function(latestStory) {
           if (!latestStory) return next(new NotFound('Story not found'));
-          
+
           if(latestStory.solvedProblem) {
             return Pairing.model.findOne({
               $and : [
@@ -152,7 +152,7 @@ exports.todayStory = function(req, res, next) {
               }));
             });
           }
-          
+
         });
     })
     .then(null, function(err) {
@@ -169,7 +169,7 @@ exports.giveUp = function(req, res, next) {
     .then(function(enrollment) {
       if (!enrollment)
         return next(new NotFound('Enrollment not found'));
-      
+
       return Story.model.findOne({
           $and: [
             { enrollment: enrollment._id },
@@ -214,7 +214,7 @@ exports.create = function(req, res, next) {
       .exec()
       .then(function(story){
         if(story) {
-          pubnub.publish({ 
+          pubnub.publish({
             channel: 'hasbrain_test_' + req.user._id,
             message: { text: 'You have finished this activity before!' }
           });
@@ -256,7 +256,7 @@ exports.create = function(req, res, next) {
                     solvedProblem: story.solvedProblem,
                     showKnowledge : story.showKnowledge
                   })
-                  
+
                   return res.status(200).apiResponse(result);
                 });
             });
@@ -307,16 +307,16 @@ exports.complete = function(req, res, next) {
           story.save(function(err){
             if(err) return next(err);
             story.populate('activity', function(err, story) {
-              pubnub.publish({ 
+              pubnub.publish({
                 channel: 'hasbrain_test_' + req.user._id,
                 message: { text: 'Congratulations! You just finished this activity.' }
               });
-              return res.status(200).apiResponse(story); 
+              return res.status(200).apiResponse(story);
             });
           });
         } else {
           const buddy = (req.user._id.equals(partner.studentA._id)) ? partner.studentB : partner.studentA;
-          
+
           return Enrollment.model.findOne({
             student: buddy._id,
             isActive: true
@@ -339,7 +339,7 @@ exports.complete = function(req, res, next) {
             .exec()
             .then(function(bStory){
               if(!bStory) {
-                pubnub.publish({ 
+                pubnub.publish({
                   channel: 'hasbrain_test_' + req.user._id,
                   message: { text: 'Your buddy must complete this activity first!' }
                 });
@@ -351,11 +351,11 @@ exports.complete = function(req, res, next) {
                 story.save(function(err){
                   if(err) return next(err);
                   story.populate('activity', function(err, story) {
-                    pubnub.publish({ 
+                    pubnub.publish({
                       channel: 'hasbrain_test_' + req.user._id,
                       message: { text: 'Congratulations! You just finished this activity.' }
                     });
-                    return res.status(200).apiResponse(story); 
+                    return res.status(200).apiResponse(story);
                   });
                 });
               }
@@ -444,7 +444,7 @@ exports.start = function(req, res, next) {
               .exec()
               .then(function(bStory){
                 if(!bStory) {
-                  pubnub.publish({ 
+                  pubnub.publish({
                     channel: 'hasbrain_test_' + req.user._id,
                     message: { text: 'In order to start this activity, you and your buddy must participate!' }
                   });
@@ -464,7 +464,7 @@ exports.start = function(req, res, next) {
                             storyId: story._id,
                             showKnowledge : story.showKnowledge,
                           });
-                          
+
                           return res.status(200).apiResponse(result);
                         });
                     });
@@ -487,7 +487,7 @@ exports.start = function(req, res, next) {
                       storyId: story._id,
                       showKnowledge : story.showKnowledge
                     });
-                    
+
                     return res.status(200).apiResponse(result);
                   });
               });
@@ -510,7 +510,7 @@ exports.showKnowledge = function(req, res, next) {
     .then(function(enrollment) {
       if (!enrollment)
         return next(new NotFound('Enrollment not found'));
-      
+
       return Story.model.findOne({
         enrollment: enrollment._id,
         activity: req.body.activity,
@@ -540,7 +540,7 @@ exports.showKnowledge = function(req, res, next) {
                 showKnowledge : story.showKnowledge,
                 solvedProblem: story.solvedProblem
               });
-              
+
               return res.status(200).apiResponse(result);
             });
         });
@@ -579,6 +579,36 @@ exports.addWorkingTime = function(req, res, next){
     });
   })
   .then(null, function(err){
+    return next(err);
+  });
+}
+
+exports.update = function(req, res, next) {
+  Story.model.findOneAndUpdate({
+    _id: req.params.id
+  },
+  req.body,
+  { upsert: false, new: true })
+  .exec()
+  .then(function(item) {
+    item.populate('activity', function(err, story) {
+      story.activity
+        .populate('company', { __v: 0 })
+        .populate('learningPath', { __v: 0, nodeTree: 0, diagram: 0 })
+        .populate('parent', { __v: 0, learningPath: 0 }, function(err, activity) {
+          var result = _.assign({}, activity.toObject({ versionKey: false }), {
+            startTime: story.startTime,
+            storyId: story._id,
+            isCompleted: story.isCompleted,
+            showKnowledge : story.showKnowledge,
+            solvedProblem: story.solvedProblem
+          });
+
+          return res.status(200).apiResponse(result);
+        });
+    });
+  })
+  .then(null, function(err) {
     return next(err);
   });
 }

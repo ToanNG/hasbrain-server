@@ -1,19 +1,19 @@
 /**
  * This file is where you define your application routes and controllers.
- * 
+ *
  * Start by including the middleware you want to run for every request;
  * you can attach middleware to the pre('routes') and pre('render') events.
- * 
+ *
  * For simplicity, the default setup for route controllers is for each to be
  * in its own file, and we import all the files in the /routes/views directory.
- * 
+ *
  * Each of these files is a route controller, and is responsible for all the
  * processing that needs to happen for the route (e.g. loading data, handling
  * form submissions, rendering the view template, etc).
- * 
+ *
  * Bind each route pattern your application should respond to in the function
  * that is exported from this module, following the examples below.
- * 
+ *
  * See the Express application routing documentation for more information:
  * http://expressjs.com/api.html#app.VERB
  */
@@ -38,7 +38,7 @@ var routes = {
 
 // Setup Route Bindings
 exports = module.exports = function(app) {
-  
+
   // Cors
   app.use(cors());
 
@@ -73,6 +73,7 @@ exports = module.exports = function(app) {
   app.get('/api/story/set-complete/:id', routes.api.circle.setCompleteStory);
 
   app.post('/api/story/add-working-time/:id', routes.api.story.addWorkingTime);
+  app.post('/api/story/update/:id', routes.api.story.update);
 
   app.get('/api/enrollment/:id/activity/list', routes.api.enrollment.listActivity);
   app.get('/api/enrollment/:id/story/list', routes.api.enrollment.listStory);
@@ -104,8 +105,8 @@ exports = module.exports = function(app) {
     // If no statusCode, default case is database error.
     return res.status(500).apiError('Database error', err.message);
   });
-  
+
   // NOTE: To protect a route so that only admins can see it, use the requireUser middleware:
   // app.get('/protected', middleware.requireUser, routes.views.protected);
-  
+
 };
