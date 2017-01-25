@@ -38,7 +38,6 @@ exports.hook = function(req, res, next) {
         if(!story) return next(NotFound('Story not found'));
 
         story.solvedProblem = true;
-        story.showKnowledge = true;
         story.typeFormData = JSON.stringify(data);
         story.save(function(err) {
           if (err) return next(err);
