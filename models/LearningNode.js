@@ -3,7 +3,8 @@ var Types = keystone.Field.Types;
 
 var LearningNode = new keystone.List('LearningNode', {
   autokey: { path: 'slug', from: 'name', unique: true },
-  sortable: true
+  sortable: true,
+  sortContext: 'LearningNode:children'
 });
 
 LearningNode.add({
