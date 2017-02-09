@@ -31,7 +31,7 @@ LearningNode.add({
 });
 
 LearningNode.relationship({ ref: 'LearningNode', path: 'children', refPath: 'parent' });
-LearningNode.relationship({ ref: 'LearningNode', path: 'requiredNode', refPath: 'dependency' });
+// LearningNode.relationship({ ref: 'LearningNode', path: 'requiredNode', refPath: 'dependency' });
 // LearningNode.relationship({ ref: 'Quiz', path: 'quiz', refPath: 'quiz' });
 
 LearningNode.schema.post('save', function(node) {
